@@ -1,0 +1,27 @@
+### Test Get
+GET http://localhost:3000/
+Content-Type: application/json
+
+### Test Post
+POST http://localhost:3000/
+Content-Type: application/json
+
+{
+    "id": "user"
+}
+
+### Test Put
+PUT http://localhost:3000/user
+Content-Type: application/json
+
+{
+    "user": "user"
+}
+
+### Test Delete
+DELETE  http://localhost:3000/user
+Content-Type: application/json
+
+{
+    "id": "user"
+}
