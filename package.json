@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Mauro8500/tickets_back#readme",
   "dependencies": {
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "nodemailer": "^6.7.3"
   }
 }
