@@ -5,6 +5,7 @@ const port = 3000
 
 const mongoose = require('mongoose')
 const Evento = require('./modelos/evento')
+const Empresas = require('./modelos/empresas')
 const bodyParser = require('body-parser')
 const jsonParser = bodyParser.json()
 
@@ -69,7 +70,7 @@ app.get('/managers', async (req, res) => {
     //res.name
     //res.description
     //res.lead
-    await Empresa.find().then(documents=>{
+    await Empresas.find().then(documents=>{
       res.status(200).json(documents)
     })
   })

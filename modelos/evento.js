@@ -5,6 +5,8 @@ const eventoSchema = mongoose.Schema({
     nombre:String,
     lugar:String,
     capacidad: Number,
+    estado: String,
+    organizador: String,
     fecha:Date,
     precio: Number,
 })

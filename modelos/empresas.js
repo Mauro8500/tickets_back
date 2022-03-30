@@ -8,4 +8,4 @@ const empSchema = mongoose.Schema({
  
 })
 
-module.exports = mongoose.model('Empresa', empSchema)
+module.exports = mongoose.model('Empresas', empSchema)
