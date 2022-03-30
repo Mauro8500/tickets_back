@@ -48,8 +48,13 @@ app.get('/events', async (req, res) => {
     //}else{
         //Get all events
     //}
+    //res.nombre
+    //res.lugar
+    //res.capacidad
+    //res.fecha
+    //res.precio
+    
     //res.id
-    //res.name
     //res.description
     //res.lead
     await Evento.find().then(documents=>{
@@ -71,10 +76,14 @@ app.get('/managers', async (req, res) => {
 
 //Post Event
 app.post('/events', jsonParser, (req, res, next) => {
+    //req.body.nombre
+    //req.body.lugar
+    //req.body.capacidad
+    //req.body.fecha
+    //req.body.precio
+
     /*req.body.beginDate
     req.body.endDate
-    req.body.eventName
-    req.body.price
     req.body.user*/
     //TODO post event method
     //TODO sent mail method

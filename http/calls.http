@@ -3,8 +3,17 @@ POST http://localhost:3000/events
 Content-Type: application/json
 
 {
-    "user": "user"
+    "nombre": "",
+    "lugar":"",
+    "capacidad":1,
+    "fecha":"12-12-2020",
+    "precio":5.5
 }
+
+### Test Get Events
+GET http://localhost:3000/events
+Content-Type: application/json
+
 
 ### Test Get
 GET http://localhost:3000/
