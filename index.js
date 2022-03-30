@@ -3,6 +3,8 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+const mongoose = require('mongoose')
+const Evento = require('./modelos/evento')
 const bodyParser = require('body-parser')
 const jsonParser = bodyParser.json()
 
@@ -28,8 +30,18 @@ const nodemailer = require('nodemailer');
   };
 //fin prueba mail
 
+//Mongo
+
+main().catch((err) => console.log(err))
+
+async function main() {
+    await mongoose.connect('mongodb://localhost:27017/tickets').then(() => {
+        console.log('Database Connected')
+    })
+}
+
 //Get Events
-app.get('/events', (req, res) => {
+app.get('/events', async (req, res) => {
     //TODO get code
     //if(req.query.name){
         //Get events with query name
@@ -40,17 +52,21 @@ app.get('/events', (req, res) => {
     //res.name
     //res.description
     //res.lead
-    res.send('json object')
+    await Evento.find().then(documents=>{
+      res.status(200).json(documents)
+    })
   })
 
 //Get Event Manager Data
-app.get('/managers', (req, res) => {
+app.get('/managers', async (req, res) => {
     //TODO get code
     //res.id
     //res.name
     //res.description
     //res.lead
-    res.send('json object')
+    await Empresa.find().then(documents=>{
+      res.status(200).json(documents)
+    })
   })
 
 //Post Event
