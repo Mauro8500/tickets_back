@@ -1,4 +1,4 @@
-### Test Post Event
+### Test post evento
 POST http://localhost:3000/events
 Content-Type: application/json
 
@@ -10,11 +10,35 @@ Content-Type: application/json
     "precio":5.5
 }
 
-### Test Get Events
+### Test put estado de evento
+PUT http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "nombre": "",
+    "state":
+}
+
+### Test put imagenes de evento
+PUT http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "nombre": "",
+    "images":[]
+}
+
+### Test get eventos
 GET http://localhost:3000/events
 Content-Type: application/json
 
+### Test get datos de manager de evento
+GET http://localhost:3000/managers
+Content-Type: application/json
 
+
+
+//plantillas calls
 ### Test Get
 GET http://localhost:3000/
 Content-Type: application/json

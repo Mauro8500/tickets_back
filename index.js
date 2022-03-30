@@ -41,7 +41,7 @@ async function main() {
     })
 }
 
-//Get Events
+//Get eventos
 app.get('/events', async (req, res) => {
     //TODO get code
     //if(req.query.name){
@@ -63,7 +63,7 @@ app.get('/events', async (req, res) => {
     })
   })
 
-//Get Event Manager Data
+//Get datos de manager de evento
 app.get('/managers', async (req, res) => {
     //TODO get code
     //res.id
@@ -75,7 +75,7 @@ app.get('/managers', async (req, res) => {
     })
   })
 
-//Post Event
+//Post evento
 app.post('/events', jsonParser, (req, res, next) => {
     //req.body.nombre
     //req.body.lugar
@@ -87,8 +87,7 @@ app.post('/events', jsonParser, (req, res, next) => {
     req.body.endDate
     req.body.user*/
     //TODO post event method
-    //TODO sent mail method
-    
+    //TODO pasar transporer a post empresas
   transporter.sendMail(mailOptions, function(error, info){
     if (error) {
       console.log(error);
@@ -99,16 +98,16 @@ app.post('/events', jsonParser, (req, res, next) => {
     //res.send('Got a POST request')
   })
 
-  //Post Images of Event
-app.post('/events/images', jsonParser, (req, res, next) => {
+  //Put imagenes de evento
+app.pUT('/events/images', jsonParser, (req, res, next) => {
     //req.body.images
     //req.body.eventName or eventId
     //TODO post images of event method
     res.send('Got a POST request')
   })
 
-  //Cancel Event
-app.post('/events', jsonParser, (req, res, next) => {
+  //Put estado de eveno
+app.put('/events', jsonParser, (req, res, next) => {
     //req.query.state
     //req.body.eventName or eventId
     //TODO post method (state = finished,scheduled,cancelled)
@@ -137,7 +136,7 @@ app.get("/tweets", (req, res, next) => {
 });*/
 //fin borrar
 
-//Rest Templates
+//plantillas rest
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
