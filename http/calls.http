@@ -3,7 +3,7 @@ POST http://localhost:3000/events
 Content-Type: application/json
 
 {
-    "nombre": "concierto a",
+    "nombre": "conciertod",
     "lugar":"estadio hernando siles",
     "capacidad":1000,
     "estado":"pendiente",
@@ -17,7 +17,7 @@ PUT http://localhost:3000/events
 Content-Type: application/json
 
 {
-    "_id": "6245a214e072d89bb530f0d3",
+    "_id": "6245cac630170cca78f483bc",
     "estado":"cancelado"
 }
 
@@ -35,7 +35,7 @@ GET http://localhost:3000/events
 Content-Type: application/json
 
 ### Test get eventos por nombre
-GET http://localhost:3000/events?nombre="evento a"
+GET http://localhost:3000/events?nombre=conciertod
 Content-Type: application/json
 
 ### Test get datos de managers

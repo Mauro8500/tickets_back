@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Mauro8500/tickets_back#readme",
   "dependencies": {
+    "convert-json-schema-to-mongoose": "^0.3.2",
     "express": "^4.17.3",
     "mongoose": "^6.2.9",
     "nodemailer": "^6.7.3"

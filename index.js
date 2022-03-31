@@ -43,11 +43,21 @@ async function main() {
 }
 
 //Get eventos
-app.get("/events", async (request, response) => {
+app.get("/events", jsonParser,async (request, response) => {
   if(request.query.nombre){
     try {
-      var result = await Evento.find(x => x.nombre == request.query.nombre).exec();
-      response.send(result);
+      var result = await Evento.find(/*x => x.nombre === request.query.nombre*/).exec((err, docs) => {
+        //console.log(typeof users.name)
+        for (var i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+          //console.log(typeof(obj))
+          if(obj.nombre){
+if(obj.nombre===request.query.nombre){
+            response.send(obj)
+          }
+          }
+      }
+      })
   } catch (error) {
       response.status(500).send(error);
   }
@@ -85,14 +95,38 @@ app.get("/events", async (request, response) => {
  // })
 
  //Get datos de manager de evento
-app.get("/managers", async (request, response) => {
+app.get("/managers",jsonParser, async (request, response) => {
   if(request.query._id){
+
+
+    try {
+      var result = await Empresas.find(/*x => x.nombre === request.query.nombre*/).exec((err, docs) => {
+        //console.log(typeof users.name)
+        for (var i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+          //console.log(typeof(obj))
+          if(obj._id){
+if(obj._id===request.query._id){
+            response.send(obj)
+          }
+          }
+      }
+      })
+  } catch (error) {
+      response.status(500).send(error);
+  }
+
+
+
     try {
       var result = await Empresas.findById(request.query._id).exec();
       response.send(result);
   } catch (error) {
       response.status(500).send(error);
   }
+
+
+
   }else{
     try {
       var result = await Empresas.find().exec();
@@ -117,9 +151,17 @@ app.get("/managers", async (request, response) => {
  // })
 
 //Post evento
-  app.post("/events", async (request, response) => {
+  app.post("/events",jsonParser, async (request, response) => {
     try {
-        var evento = new Evento(request.body);
+      var evento = new Evento({
+        nombre:request.body.nombre,
+        lugar:request.body.lugar,
+        capacidad:request.body.capacidad,
+        estado:request.body.estado,
+        organizador:request.body.organizador,
+        fecha:request.body.fecha,
+        precio:request.body.precio
+      });
         var result = await evento.save();
         response.send(result);
     } catch (error) {
@@ -164,16 +206,44 @@ app.get("/managers", async (request, response) => {
  // })
 
   //Put estado de evento
-  app.put("/events", async (request, response) => {
-  try {
-    var evento = await Evento.findById(request.body._id).exec();
-    evento.set(request.body);
+  app.put("/events",jsonParser, async (request, response) => {
+ // try {
+  /*  var evento = await Evento.findById(request.body._id).exec();
+    //evento.set(request.body);
+    evento.estado=request.body.estado
     var result = await evento.save();
-    response.send(result);
+    response.send(result);*/
+    try {
+      var result = await Evento.find(/*x => x.nombre === request.query.nombre*/).exec((err, docs) => {
+        //console.log(typeof users.name)
+        for (var i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+          var aux = JSON.stringify(obj._id)
+          
+          if(aux){
+           // console.log(request.body._id,typeof(request.body._id))
+if(aux===JSON.stringify(request.body._id)){
+
+  obj.estado=request.body.estado
+  console.log(obj)
+  var result = obj.save();
+  response.send(result);
+          }
+          }
+      }
+      })
   } catch (error) {
-    response.status(500).send(error);
+      response.status(500).send(error);
   }
-  })
+
+
+
+
+
+ /* } catch (error) {
+    response.status(500).send(error);
+  }*/
+  });
 
     //Put estado de evento deprecated
 //app.put('/events', jsonParser, (req, res, next) => {
