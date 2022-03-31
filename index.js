@@ -11,6 +11,7 @@ const jsonParser = bodyParser.json()
 
 //inicio prueba mail
 const nodemailer = require('nodemailer');
+const req = require('express/lib/request')
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -42,7 +43,17 @@ async function main() {
 }
 
 //Get eventos
-app.get('/events', async (req, res) => {
+app.get("/events", async (request, response) => {
+  try {
+      var result = await Evento.find().exec();
+      response.send(result);
+  } catch (error) {
+      response.status(500).send(error);
+  }
+});
+
+//Get eventos deprecated
+//app.get('/events', async (req, res) => {
     //TODO get code
     //if(req.query.name){
         //Get events with query name
@@ -58,61 +69,109 @@ app.get('/events', async (req, res) => {
     //res.id
     //res.description
     //res.lead
-    await Evento.find().then(documents=>{
+   /* await Evento.find().then(documents=>{
       res.status(200).json(documents)
-    })
-  })
+    })*/
+ // })
 
-//Get datos de manager de evento
-app.get('/managers', async (req, res) => {
+ //Get datos de manager de evento
+app.get("/managers", async (request, response) => {
+  if(request.query._id){
+    try {
+      var result = await Empresas.findById(request.query._id).exec();
+      response.send(result);
+  } catch (error) {
+      response.status(500).send(error);
+  }
+  }else{
+    try {
+      var result = await Empresas.find().exec();
+      response.send(result);
+  } catch (error) {
+      response.status(500).send(error);
+  }
+  }
+
+});
+
+//Get datos de manager de evento deprecated
+//app.get('/managers', async (req, res) => {
     //TODO get code
     //res.id
     //res.name
     //res.description
     //res.lead
-    await Empresas.find().then(documents=>{
+    /*await Empresas.find().then(documents=>{
       res.status(200).json(documents)
-    })
-  })
+    })*/
+ // })
 
 //Post evento
-app.post('/events', jsonParser, (req, res, next) => {
+  app.post("/events", async (request, response) => {
+    try {
+        var evento = new Evento(request.body);
+        var result = await evento.save();
+        response.send(result);
+    } catch (error) {
+        response.status(500).send(error);
+    }
+});
+
+//Post evento deprecated
+//app.post('/events', jsonParser, (req, res, next) => {
+
     //req.body.nombre
     //req.body.lugar
     //req.body.capacidad
+    //req.body.estado
+    //req.body.organizador
     //req.body.fecha
     //req.body.precio
 
+    //res.send('Got a POST request')
+    
     /*req.body.beginDate
-    req.body.endDate
-    req.body.user*/
-    //TODO post event method
-    //TODO pasar transporer a post empresas
-  transporter.sendMail(mailOptions, function(error, info){
+    req.body.endDate*/
+
+    //TODO pasar transporter a post empresas
+  /*transporter.sendMail(mailOptions, function(error, info){
     if (error) {
       console.log(error);
     } else {
       console.log('Email sent: ' + info.response);
     }
-  });
-    //res.send('Got a POST request')
-  })
+  });*/
 
-  //Put imagenes de evento
-app.pUT('/events/images', jsonParser, (req, res, next) => {
+  //})
+
+  //Put imagenes de evento deprecated
+  //TODO metodo oficial y agregar endpoint o campos para imagenes
+//app.put('/events/images', jsonParser, (req, res, next) => {
     //req.body.images
     //req.body.eventName or eventId
-    //TODO post images of event method
-    res.send('Got a POST request')
+    //TODO put images of event method
+   // res.send('Got a PUT request')
+ // })
+
+  //Put estado de evento
+  app.put("/events", async (request, response) => {
+  try {
+    var evento = await Evento.findById(request.body._id).exec();
+    evento.set(request.body);
+    var result = await evento.save();
+    response.send(result);
+  } catch (error) {
+    response.status(500).send(error);
+  }
   })
 
-  //Put estado de eveno
-app.put('/events', jsonParser, (req, res, next) => {
-    //req.query.state
-    //req.body.eventName or eventId
-    //TODO post method (state = finished,scheduled,cancelled)
-    res.send('Got a POST request')
-  })
+    //Put estado de evento deprecated
+//app.put('/events', jsonParser, (req, res, next) => {
+  //req.query.state
+  //req.body.eventName or eventId
+  //TODO post method (state = finished,scheduled,cancelled)
+ // res.send('Got a PUT request')
+//})
 
   //inicio borrar
  /* app.get("/hello",jsonParser, (req, res, next) => {
@@ -141,9 +200,9 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.post('/', (req, res) => {
+/*app.post('/', (req, res) => {
   res.send('Got a POST request')
-})
+})*/
 
 app.put('/user', (req, res) => {
   res.send('Got a PUT request at /user')

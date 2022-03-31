@@ -3,11 +3,13 @@ POST http://localhost:3000/events
 Content-Type: application/json
 
 {
-    "nombre": "",
-    "lugar":"",
-    "capacidad":1,
-    "fecha":"12-12-2020",
-    "precio":5.5
+    "nombre": "concierto a",
+    "lugar":"estadio hernando siles",
+    "capacidad":1000,
+    "estado":"pendiente",
+    "organizador":"empresa1",
+    "fecha":"2020-12-12",
+    "precio":700
 }
 
 ### Test put estado de evento
@@ -15,8 +17,8 @@ PUT http://localhost:3000/events
 Content-Type: application/json
 
 {
-    "nombre": "",
-    "state":
+    "_id": "6245a214e072d89bb530f0d3",
+    "estado":"cancelado"
 }
 
 ### Test put imagenes de evento
@@ -32,10 +34,13 @@ Content-Type: application/json
 GET http://localhost:3000/events
 Content-Type: application/json
 
-### Test get datos de manager de evento
+### Test get datos de managers
 GET http://localhost:3000/managers
 Content-Type: application/json
 
+### Test get datos de manager de evento
+GET http://localhost:3000/managers?_id="a"
+Content-Type: application/json
 
 
 //plantillas calls
