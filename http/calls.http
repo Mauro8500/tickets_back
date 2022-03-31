@@ -34,6 +34,10 @@ Content-Type: application/json
 GET http://localhost:3000/events
 Content-Type: application/json
 
+### Test get eventos por nombre
+GET http://localhost:3000/events?nombre="evento a"
+Content-Type: application/json
+
 ### Test get datos de managers
 GET http://localhost:3000/managers
 Content-Type: application/json

@@ -44,12 +44,22 @@ async function main() {
 
 //Get eventos
 app.get("/events", async (request, response) => {
-  try {
+  if(request.query.nombre){
+    try {
+      var result = await Evento.find(x => x.nombre == request.query.nombre).exec();
+      response.send(result);
+  } catch (error) {
+      response.status(500).send(error);
+  }
+  }else{
+    try {
       var result = await Evento.find().exec();
       response.send(result);
   } catch (error) {
       response.status(500).send(error);
   }
+  }
+
 });
 
 //Get eventos deprecated
