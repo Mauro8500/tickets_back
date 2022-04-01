@@ -10,7 +10,7 @@ Content-Type: application/json
     "organizador":"empresa1",
     "fechaInicio":"2020-12-12",
     "fechaFin":"2020-12-29",
-    "precio":-0.01
+    "precio":0.01
 }
 
 ### Test put estado de evento
@@ -27,7 +27,7 @@ PUT http://localhost:3000/events
 Content-Type: application/json
 
 {
-    "nombre": "",
+    "_id": "62473dd8186af518eb739b23",
     "images":[]
 }
 

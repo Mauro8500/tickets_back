@@ -92,28 +92,6 @@ app.get("/events", jsonParser, async (request, response) => {
   }
 });
 
-//Get eventos deprecated
-//app.get('/events', async (req, res) => {
-//TODO get code
-//if(req.query.name){
-//Get events with query name
-//}else{
-//Get all events
-//}
-//res.nombre
-//res.lugar
-//res.capacidad
-//res.fecha
-//res.precio
-
-//res.id
-//res.description
-//res.lead
-/* await Evento.find().then(documents=>{
-      res.status(200).json(documents)
-    })*/
-// })
-
 //Get datos de manager de evento
 app.get("/managers", jsonParser, async (request, response) => {
   if (request.query._id) {
@@ -153,24 +131,16 @@ app.get("/managers", jsonParser, async (request, response) => {
   }
 });
 
-//Get datos de manager de evento deprecated
-//app.get('/managers', async (req, res) => {
-//TODO get code
-//res.id
-//res.name
-//res.description
-//res.lead
-/*await Empresas.find().then(documents=>{
-      res.status(200).json(documents)
-    })*/
-// })
-
 //Post evento
 app.post(
   "/events",
   upload.array("images", 12),
   jsonParser,
   async (request, response) => {
+    if(request.body.nombre==undefined || request.body.fechaInicio==undefined || request.body.fechaFin==undefined || request.body.precio==undefined ||
+      request.body.nombre==""||request.body.fechaInicio==""||request.body.fechaFin==""||request.body.precio==""){
+      response.status(400).send("Los campos de nombre, fecha inicial, fecha final y precio no pueden estar vacios");
+    }else{
     try {
       var images = [];
       for (var i = 0; i < request.files; i++) {
@@ -181,6 +151,7 @@ app.post(
           contentType: "image/png",
         });
       }
+
       var evento = new Evento({
         nombre: request.body.nombre,
         lugar: request.body.lugar,
@@ -204,14 +175,11 @@ app.post(
           }else{
             if(request.body.precio>=0){
 
-        //  if(!request.body.nombre || !request.body.fechaInicio || !request.body.fechaFin || !request.body.precio,
-          //  request.body.nombre==""||request.body.fechaInicio==""||request.body.fechaFin==""||request.body.precio==""){
-          //  response.status(400).send("Los campos de nombre, fecha inicial, fecha final y precio no pueden estar vacios");
-         // }else{
+
               var result = await evento.save();
           response.send(result);
 
-          //}
+          
 
 
             }else{
@@ -230,6 +198,7 @@ app.post(
     } catch (error) {
       response.status(500).send(error);
     }
+  }
   }
 );
 
@@ -277,6 +246,10 @@ app.put("/events", jsonParser, async (request, response) => {
     evento.estado=request.body.estado
     var result = await evento.save();
     response.send(result);*/
+    if(request.body._id==undefined || request.body.estado==undefined ||
+      request.body._id==""||request.body.estado==""){
+      response.status(400).send("Los campos de _id, y estado no pueden estar vacios");
+    }else{
   try {
     var result =
       await Evento.find(/*x => x.nombre === request.query.nombre*/).exec(
@@ -301,19 +274,9 @@ app.put("/events", jsonParser, async (request, response) => {
   } catch (error) {
     response.status(500).send(error);
   }
+}
 
-  /* } catch (error) {
-    response.status(500).send(error);
-  }*/
 });
-
-//Put estado de evento deprecated
-//app.put('/events', jsonParser, (req, res, next) => {
-//req.query.state
-//req.body.eventName or eventId
-//TODO post method (state = finished,scheduled,cancelled)
-// res.send('Got a PUT request')
-//})
 
 //inicio borrar
 /* app.get("/hello",jsonParser, (req, res, next) => {
