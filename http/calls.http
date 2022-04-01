@@ -8,7 +8,8 @@ Content-Type: application/json
     "capacidad":1000,
     "estado":"pendiente",
     "organizador":"empresa1",
-    "fecha":"2020-12-12",
+    "fechaInicio":"2020-12-12",
+    "fechaFin":"2020-12-29",
     "precio":700
 }
 
@@ -17,7 +18,7 @@ PUT http://localhost:3000/events
 Content-Type: application/json
 
 {
-    "_id": "6245cac630170cca78f483bc",
+    "_id": "62473dd8186af518eb739b23",
     "estado":"cancelado"
 }
 
@@ -45,6 +46,9 @@ Content-Type: application/json
 ### Test get datos de manager de evento
 GET http://localhost:3000/managers?_id="a"
 Content-Type: application/json
+
+
+
 
 
 //plantillas calls

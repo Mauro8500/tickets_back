@@ -173,27 +173,36 @@ app.post(
   async (request, response) => {
     try {
       var images = [];
-      for (var i = 0; i < req.files; i++) {
+      for (var i = 0; i < request.files; i++) {
         images.push({
           data: fs.readFileSync(
-            path.join(__dirname + "/uploads/" + req.files[i].filename)
+            path.join(__dirname + "/uploads/" + request.files[i].filename)
           ),
           contentType: "image/png",
         });
       }
-
       var evento = new Evento({
         nombre: request.body.nombre,
         lugar: request.body.lugar,
         capacidad: request.body.capacidad,
         estado: request.body.estado,
         organizador: request.body.organizador,
-        fecha: request.body.fecha,
+        fechaInicio: request.body.fechaInicio,
+        fechaFin: request.body.fechaFin,
         precio: request.body.precio,
         imagenes: images,
       });
-      var result = await evento.save();
-      response.send(result);
+      if(request.body.fechaInicio>request.body.fechaFin){
+        response.status(400).send("La fecha de inicio no puede ser mayor a la fecha en la que finaliza el evento");
+      }else{
+        if(request.body.fechaInicio<=request.body.fechaFin){
+          var result = await evento.save();
+          response.send(result);    
+        }else{
+          //No hace nada
+        }
+      }
+      
     } catch (error) {
       response.status(500).send(error);
     }
