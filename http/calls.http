@@ -10,7 +10,7 @@ Content-Type: application/json
     "organizador":"empresa1",
     "fechaInicio":"2020-12-12",
     "fechaFin":"2020-12-29",
-    "precio":700
+    "precio":-0.01
 }
 
 ### Test put estado de evento

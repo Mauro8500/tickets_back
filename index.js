@@ -196,8 +196,32 @@ app.post(
         response.status(400).send("La fecha de inicio no puede ser mayor a la fecha en la que finaliza el evento");
       }else{
         if(request.body.fechaInicio<=request.body.fechaFin){
-          var result = await evento.save();
-          response.send(result);    
+
+
+
+          if(request.body.precio<0){
+            response.status(400).send("El precio no puede ser negativo");
+          }else{
+            if(request.body.precio>=0){
+
+        //  if(!request.body.nombre || !request.body.fechaInicio || !request.body.fechaFin || !request.body.precio,
+          //  request.body.nombre==""||request.body.fechaInicio==""||request.body.fechaFin==""||request.body.precio==""){
+          //  response.status(400).send("Los campos de nombre, fecha inicial, fecha final y precio no pueden estar vacios");
+         // }else{
+              var result = await evento.save();
+          response.send(result);
+
+          //}
+
+
+            }else{
+              //no hace nada
+            }
+          }
+          
+          
+          
+
         }else{
           //No hace nada
         }
