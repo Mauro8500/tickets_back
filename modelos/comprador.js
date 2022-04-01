@@ -10,3 +10,5 @@ const compradorSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("Comprador", compradorSchema);
+
+//estructura principal de comprador

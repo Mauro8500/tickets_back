@@ -14,3 +14,5 @@ const vendedorSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("Vendedor", vendedorSchema);
+
+//vendedor de tickets
