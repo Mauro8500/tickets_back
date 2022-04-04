@@ -1,9 +1,71 @@
+### Test post vendedor
+POST http://localhost:3000/managers
+Content-Type: application/json
+
+{
+    "nombre1": "carlos",
+    "nombre2": "diego",
+    "apellido1": "mendizabal",
+    "apellido2": "mostajo",
+    "fechaNacimiento":"1999-12-12",
+    "password":"0000",
+    "repassword":"0000",
+    "ci":"6105591",
+    "mail":"carlos.mendizabal@ucb.edu.bo",
+    "ciudad":"la paz",
+    "cuenta":"4343432234"
+}
+
+### Test post comprador
+POST http://localhost:3000/clientes
+Content-Type: application/json
+
+{
+    "nombre1": "carlos",
+    "nombre2": "diego",
+    "apellido1": "mendizabal",
+    "apellido2": "mostajo",
+    "fechaNacimiento":"1999-12-12",
+    "password":"0000",
+    "repassword":"0000",
+    "ci":"6105591",
+    "mail":"carlos.mendizabal@ucb.edu.bo"
+}
+
+### Test post vendedor
+POST http://localhost:3000/vendedores
+Content-Type: application/json
+
+{
+    "nombre1": "carlos",
+    "nombre2": "diego",
+    "apellido1": "mendizabal",
+    "apellido2": "mostajo",
+    "fechaNacimiento":"1999-12-12",
+    "password":"0000",
+    "repassword":"0000",
+    "ci":"6105591",
+    "mail":"carlos.mendizabal@ucb.edu.bo",
+    "pais":"Bolivia",
+    "ciudad":"La Paz",
+    "telefono":"748299291",
+    "cuenta":"21311541231"
+}
+
+### Test get datos de clientes
+GET http://localhost:3000/clientes
+Content-Type: application/json
+
+### Test get datos de vendedores
+GET http://localhost:3000/vendedores
+Content-Type: application/json
+
 ### Test post evento
 POST http://localhost:3000/events
 Content-Type: application/json
 
 {
-    "nombre": "conciertod",
+    "nombre": "conciertofin",
     "lugar":"estadio hernando siles",
     "capacidad":1000,
     "estado":"pendiente",
@@ -18,17 +80,8 @@ PUT http://localhost:3000/events
 Content-Type: application/json
 
 {
-    "_id": "62473dd8186af518eb739b23",
-    "estado":"cancelado"
-}
-
-### Test put imagenes de evento
-PUT http://localhost:3000/events
-Content-Type: application/json
-
-{
-    "_id": "62473dd8186af518eb739b23",
-    "images":[]
+    "_id": "624b103f9b8bbe3d3994ddfc",
+    "estado":"pendiente"
 }
 
 ### Test get eventos
@@ -36,7 +89,7 @@ GET http://localhost:3000/events
 Content-Type: application/json
 
 ### Test get eventos por nombre
-GET http://localhost:3000/events?nombre=conciertod
+GET http://localhost:3000/events?nombre=conciertofin
 Content-Type: application/json
 
 ### Test get datos de managers
@@ -47,7 +100,14 @@ Content-Type: application/json
 GET http://localhost:3000/managers?_id="a"
 Content-Type: application/json
 
+### Test put imagenes de evento
+PUT http://localhost:3000/events
+Content-Type: application/json
 
+{
+    "_id": "62473dd8186af518eb739b23",
+    "images":[]
+}
 
 
 

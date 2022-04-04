@@ -8,6 +8,7 @@ const Evento = require("./modelos/evento");
 const Empresas = require("./modelos/empresas");
 const Comprador = require("./modelos/comprador");
 const Vendedor = require("./modelos/vendedor");
+const Cliente = require("./modelos/cliente");
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 var fs = require("fs");
@@ -90,6 +91,84 @@ app.get("/events", jsonParser, async (request, response) => {
       response.status(500).send(error);
     }
   }
+});
+
+//Get datos de vendedor
+app.get("/vendedores", jsonParser, async (request, response) => {
+  /*if (request.query._id) {
+    try {
+      var result =
+        await Empresas.find(*//*x => x.nombre === request.query.nombre*//*).exec(
+          (err, docs) => {*/
+            //console.log(typeof users.name)
+            /*for (var i = 0, l = docs.length; i < l; i++) {
+              var obj = docs[i];*/
+              //console.log(typeof(obj))
+            /*  if (obj._id) {
+                if (obj._id === request.query._id) {
+                  response.send(obj);
+                }
+              }
+            }
+          }
+        );
+    } catch (error) {
+      response.status(500).send(error);
+    }
+
+    try {
+      var result = await Empresas.findById(request.query._id).exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  } else {*/
+    try {
+      var result = await Vendedor.find().exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  //}
+});
+
+//Get datos de clientes
+app.get("/clientes", jsonParser, async (request, response) => {
+  /*if (request.query._id) {
+    try {
+      var result =
+        await Empresas.find(*//*x => x.nombre === request.query.nombre*//*).exec(
+          (err, docs) => {*/
+            //console.log(typeof users.name)
+            /*for (var i = 0, l = docs.length; i < l; i++) {
+              var obj = docs[i];*/
+              //console.log(typeof(obj))
+            /*  if (obj._id) {
+                if (obj._id === request.query._id) {
+                  response.send(obj);
+                }
+              }
+            }
+          }
+        );
+    } catch (error) {
+      response.status(500).send(error);
+    }
+
+    try {
+      var result = await Empresas.findById(request.query._id).exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  } else {*/
+    try {
+      var result = await Cliente.find().exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  //}
 });
 
 //Get datos de manager de evento
@@ -278,6 +357,117 @@ app.put("/events", jsonParser, async (request, response) => {
 
 });
 
+//Post cliente
+app.post(
+  "/clientes",
+  jsonParser,
+  async (request, response) => {
+    if(request.body.nombre1==undefined || request.body.apellido1==undefined ||
+       request.body.apellido2==undefined || request.body.fechaNacimiento==undefined ||
+       request.body.password==undefined || request.body.ci==undefined ||
+       request.body.mail==undefined || request.body.mail=="" ||
+      request.body.nombre1==""||request.body.apellido1==""||
+      request.body.apellido2==""||request.body.fechaNacimiento==""||
+      request.body.password==""||request.body.ci==""){
+      response.status(400).send("Los campos de primer nombre, primer apellido, segundo apellido, contraseña, ci y mail no pueden estar vacios");
+    }else{
+    try {
+
+      var cliente = new Cliente({
+        nombre1: request.body.nombre1,
+        nombre2: request.body.nombre2,
+        apellido1: request.body.apellido1,
+        apellido2: request.body.apellido2,
+        fechaNacimiento: request.body.fechaNacimiento,
+        password: request.body.password,
+        ci: request.body.ci,
+        mail: request.body.mail
+      });
+      if(request.body.fechaNacimiento>=new Date()){
+        response.status(400).send("Fecha de nacimiento inválida");
+      }else{
+
+          if(request.body.password != request.body.repassword){
+            response.status(400).send("Las contraseñas no coinciden");
+          }else{
+            //if(request.body.precio>=0){
+
+
+              var result = await cliente.save();
+          response.send(result);
+
+            /*}else{
+              //no hace nada
+            }*/
+          }
+          
+      }
+      
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+  }
+);
+
+
+//Post vendedor
+app.post(
+  "/vendedores",
+  jsonParser,
+  async (request, response) => {
+    if(request.body.nombre1==undefined || request.body.apellido1==undefined ||
+       request.body.apellido2==undefined || request.body.fechaNacimiento==undefined ||
+       request.body.password==undefined || request.body.ci==undefined ||
+       request.body.mail==undefined || request.body.mail=="" ||
+      request.body.nombre1==""||request.body.apellido1==""||
+      request.body.apellido2==""||request.body.fechaNacimiento==""||
+      request.body.password==""||request.body.ci=="" ||
+      request.body.ciudad==undefined||request.body.ciudad==""){
+      response.status(400).send("Los campos de primer nombre, primer apellido, segundo apellido, contraseña, ci, mail y ciudad no pueden estar vacios");
+    }else{
+    try {
+
+      var vendedor = new Vendedor({
+        nombre1: request.body.nombre1,
+        nombre2: request.body.nombre2,
+        apellido1: request.body.apellido1,
+        apellido2: request.body.apellido2,
+        fechaNacimiento: request.body.fechaNacimiento,
+        password: request.body.password,
+        ci: request.body.ci,
+        mail: request.body.mail,
+        pais: request.body.pais,
+        ciudad: request.body.ciudad,
+        telefono: request.body.telefono,
+        cuenta: request.body.cuenta
+      });
+      if(request.body.fechaNacimiento>=new Date()){
+        response.status(400).send("Fecha de nacimiento inválida");
+      }else{
+
+          if(request.body.password != request.body.repassword){
+            response.status(400).send("Las contraseñas no coinciden");
+          }else{
+            //if(request.body.precio>=0){
+
+
+              var result = await vendedor.save();
+          response.send(result);
+
+            /*}else{
+              //no hace nada
+            }*/
+          }
+          
+      }
+      
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+  }
+);
 //inicio borrar
 /* app.get("/hello",jsonParser, (req, res, next) => {
     res.json('hello '+req.query.name);
@@ -310,7 +500,7 @@ app.get("/", (req, res) => {
 })*/
 
 app.put("/user", (req, res) => {
-  res.send("Got a PUT request at /user");
+  //res.send("Got a PUT request at /user");
 });
 
 app.delete("/user", (req, res) => {

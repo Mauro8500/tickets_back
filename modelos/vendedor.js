@@ -1,16 +1,19 @@
 const mongoose = require("mongoose");
 
 const vendedorSchema = mongoose.Schema({
-  nombre: String,
-  fechaDeNacimiento: Date,
+  nombre1: String,
+  nombre2: String,
+  apellido1: String,
+  apellido2: String,
+  fechaNacimiento: Date,
+  password: String,
   ci: String,
+  mail: String,
   pais: String,
-  email: String,
-  contrasena: String,
-  ubicacion: String,
+  ciudad: String,
   telefono: Number,
-  tipoDeEmpresa: String,
-  tarjetaDeCredito: String,
+  cuenta: String,
+    //tipoDeEmpresa: String,
 });
 
 module.exports = mongoose.model("Vendedor", vendedorSchema);
