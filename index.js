@@ -5,7 +5,7 @@ const port = 3000;
 
 const mongoose = require("mongoose");
 const Evento = require("./modelos/evento");
-const Empresas = require("./modelos/empresas");
+const Empresa = require("./modelos/empresa");
 const Comprador = require("./modelos/comprador");
 const Vendedor = require("./modelos/vendedor");
 const Cliente = require("./modelos/cliente");
@@ -171,45 +171,6 @@ app.get("/clientes", jsonParser, async (request, response) => {
   //}
 });
 
-//Get datos de manager de evento
-app.get("/managers", jsonParser, async (request, response) => {
-  if (request.query._id) {
-    try {
-      var result =
-        await Empresas.find(/*x => x.nombre === request.query.nombre*/).exec(
-          (err, docs) => {
-            //console.log(typeof users.name)
-            for (var i = 0, l = docs.length; i < l; i++) {
-              var obj = docs[i];
-              //console.log(typeof(obj))
-              if (obj._id) {
-                if (obj._id === request.query._id) {
-                  response.send(obj);
-                }
-              }
-            }
-          }
-        );
-    } catch (error) {
-      response.status(500).send(error);
-    }
-
-    try {
-      var result = await Empresas.findById(request.query._id).exec();
-      response.send(result);
-    } catch (error) {
-      response.status(500).send(error);
-    }
-  } else {
-    try {
-      var result = await Empresas.find().exec();
-      response.send(result);
-    } catch (error) {
-      response.status(500).send(error);
-    }
-  }
-});
-
 //Post evento
 app.post(
   "/events",
@@ -317,7 +278,7 @@ app.post(
 // res.send('Got a PUT request')
 // })
 
-//Put estado de evento
+//Put estado de evento y/o limite de tickets
 app.put("/events", jsonParser, async (request, response) => {
   // try {
   /*  var evento = await Evento.findById(request.body._id).exec();
@@ -325,9 +286,11 @@ app.put("/events", jsonParser, async (request, response) => {
     evento.estado=request.body.estado
     var result = await evento.save();
     response.send(result);*/
-    if(request.body._id==undefined || request.body.estado==undefined ||
-      request.body._id==""||request.body.estado==""){
-      response.status(400).send("Los campos de _id, y estado no pueden estar vacios");
+    if(request.body._id==undefined || (request.body.estado==undefined &&
+      request.body.capacidad==undefined) ||
+      request.body._id==""||(request.body.estado==""
+      && request.body.capacidad<0)){
+      response.status(400).send("Faltan parametros ");
     }else{
   try {
     var result =
@@ -341,7 +304,12 @@ app.put("/events", jsonParser, async (request, response) => {
             if (aux) {
               // console.log(request.body._id,typeof(request.body._id))
               if (aux === JSON.stringify(request.body._id)) {
-                obj.estado = request.body.estado;
+                if(request.body.estado!=undefined && request.body.estado!=""){
+                  obj.estado = request.body.estado;
+                }
+                if(request.body.capacidad!=undefined && request.body.capacidad>=0){
+                  obj.capacidad = request.body.capacidad;
+                }
                 console.log(obj);
                 var result = obj.save();
                 response.send(result);
@@ -468,6 +436,82 @@ app.post(
   }
   }
 );
+
+//Post empresa
+app.post(
+  "/empresas",
+  jsonParser,
+  async (request, response) => {
+    if(request.body.nombre==undefined || request.body.nombre==""){
+      response.status(400).send("El campo de nombre no puede estar vacio");
+    }else{
+    try {
+
+      var empresa = new Empresa({
+        nombre: request.body.nombre,
+        descripcion: request.body.descripcion,
+        ercargado: request.body.encargado
+      });
+     /* if(request.body.fechaNacimiento>=new Date()){
+        response.status(400).send("Fecha de nacimiento inválida");
+      }else{*/
+            //if(request.body.precio>=0){
+
+
+              var result = await empresa.save();
+          response.send(result);
+
+            /*}else{
+              //no hace nada
+            }*/
+          
+      //}
+      
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+  }
+);
+
+//Get empresa
+app.get("/empresas", jsonParser, async (request, response) => {
+  if (request.query._id) {
+    try {
+      var result =
+        await Empresa.find(/*x => x.nombre === request.query.nombre*/).exec(
+          (err, docs) => {
+            //console.log(typeof users.name)
+            for (var i = 0, l = docs.length; i < l; i++) {
+              var obj = docs[i];
+              //console.log(typeof(obj))
+              if (obj._id) {
+                if (obj._id === request.query._id) {
+                  response.send(obj);
+                }
+              }
+            }
+          }
+        );
+    } catch (error) {
+      response.status(500).send(error);
+    }
+
+    try {
+      var result = await Empresa.findById(request.query._id).exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  } else {
+    try {
+      var result = await Empresa.find().exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+});
 //inicio borrar
 /* app.get("/hello",jsonParser, (req, res, next) => {
     res.json('hello '+req.query.name);

@@ -1,21 +1,3 @@
-### Test post vendedor
-POST http://localhost:3000/managers
-Content-Type: application/json
-
-{
-    "nombre1": "carlos",
-    "nombre2": "diego",
-    "apellido1": "mendizabal",
-    "apellido2": "mostajo",
-    "fechaNacimiento":"1999-12-12",
-    "password":"0000",
-    "repassword":"0000",
-    "ci":"6105591",
-    "mail":"carlos.mendizabal@ucb.edu.bo",
-    "ciudad":"la paz",
-    "cuenta":"4343432234"
-}
-
 ### Test post comprador
 POST http://localhost:3000/clientes
 Content-Type: application/json
@@ -80,8 +62,27 @@ PUT http://localhost:3000/events
 Content-Type: application/json
 
 {
-    "_id": "624b103f9b8bbe3d3994ddfc",
-    "estado":"pendiente"
+    "_id": "62473dd8186af518eb739b23",
+    "estado":"cancelado"
+}
+
+### Test put estado y capacidad de evento
+PUT http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "_id": "62473dd8186af518eb739b23",
+    "estado":"pendiente",
+    "capacidad":500
+}
+
+### Test put capacidad de evento
+PUT http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "_id": "62473dd8186af518eb739b23",
+    "capacidad":300
 }
 
 ### Test get eventos
@@ -92,11 +93,21 @@ Content-Type: application/json
 GET http://localhost:3000/events?nombre=conciertofin
 Content-Type: application/json
 
-### Test get datos de managers
-GET http://localhost:3000/managers
+### Test get datos de empresas
+GET http://localhost:3000/empresas
 Content-Type: application/json
 
-### Test get datos de manager de evento
+### Test post empresa
+POST http://localhost:3000/empresas
+Content-Type: application/json
+
+{
+    "nombre": "coca cola",
+    "descripcion": "descripcion",
+    "encargado":"carlos.mendizabal@ucb.edu.bo"
+}
+
+### Test get datos de empresa por nombre TODO
 GET http://localhost:3000/managers?_id="a"
 Content-Type: application/json
 

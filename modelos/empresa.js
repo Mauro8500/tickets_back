@@ -8,7 +8,7 @@ const empSchema = mongoose.Schema({
  
 })
 
-module.exports = mongoose.model('Empresas', empSchema)
+module.exports = mongoose.model('Empresa', empSchema)
 
 
 //estructura de empresa o encargado de las ventas de tickets
