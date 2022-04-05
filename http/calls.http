@@ -3,7 +3,7 @@ POST http://localhost:3000/eventos
 Content-Type: application/json
 
 {
-    "nombre": "conciertofin",
+    "nombre": "eventoc",
     "lugar":"estadio hernando siles",
     "capacidad":1000,
     "estado":"pendiente",
@@ -54,8 +54,41 @@ Content-Type: application/json
     "cuenta":"3341-2312"
 }
 
+### Test put estado de evento
+PUT http://localhost:3000/eventos
+Content-Type: application/json
 
+{
+    "_id": "624c85c2c029328daeaa69a7",
+    "estado":"cancelado"
+}
 
+### Test put estado y capacidad de evento
+PUT http://localhost:3000/eventos
+Content-Type: application/json
+
+{
+    "_id": "624c85c2c029328daeaa69a7",
+    "estado":"pendiente",
+    "capacidad":200
+}
+
+### Test put capacidad de evento
+PUT http://localhost:3000/eventos
+Content-Type: application/json
+
+{
+    "_id": "624c85c2c029328daeaa69a7",
+    "capacidad":-100
+}
+
+### Test get eventos
+GET http://localhost:3000/eventos
+Content-Type: application/json
+
+### Test get eventos por nombre
+GET http://localhost:3000/eventos?nombre=eventoa
+Content-Type: application/json
 
 
 
@@ -81,42 +114,6 @@ Content-Type: application/json
 
 ### Test get datos de vendedores
 GET http://localhost:3000/vendedores
-Content-Type: application/json
-
-### Test put estado de evento
-PUT http://localhost:3000/events
-Content-Type: application/json
-
-{
-    "_id": "62473dd8186af518eb739b23",
-    "estado":"cancelado"
-}
-
-### Test put estado y capacidad de evento
-PUT http://localhost:3000/events
-Content-Type: application/json
-
-{
-    "_id": "62473dd8186af518eb739b23",
-    "estado":"pendiente",
-    "capacidad":500
-}
-
-### Test put capacidad de evento
-PUT http://localhost:3000/events
-Content-Type: application/json
-
-{
-    "_id": "62473dd8186af518eb739b23",
-    "capacidad":300
-}
-
-### Test get eventos
-GET http://localhost:3000/events
-Content-Type: application/json
-
-### Test get eventos por nombre
-GET http://localhost:3000/events?nombre=conciertofin
 Content-Type: application/json
 
 ### Test get datos de empresas
@@ -146,28 +143,7 @@ Content-Type: application/json
     "images":[]
 }
 
-
-
 //plantillas calls
-### Test Get
-GET http://localhost:3000/
-Content-Type: application/json
-
-### Test Post
-POST http://localhost:3000/
-Content-Type: application/json
-
-{
-    "id": "user"
-}
-
-### Test Put
-PUT http://localhost:3000/user
-Content-Type: application/json
-
-{
-    "user": "user"
-}
 
 ### Test Delete
 DELETE  http://localhost:3000/user

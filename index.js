@@ -266,34 +266,64 @@ app.post("/vendedores",jsonParser,async (request, response) => {
 
 
 
+//Put estado de evento y/o limite de tickets
+app.put("/eventos", jsonParser, async (request, response) => {
+    if(request.body._id==undefined || (request.body.estado==undefined && request.body.capacidad==undefined) ||
+      request.body._id==""||(request.body.estado=="")){
+      response.status(400).send("Se requieren los parametros _id y estado o capacidad");
+    }else{
+  try {
+    await Evento.find().exec((err, docs) => {
+          for (let i = 0, l = docs.length; i < l; i++) {
+            var obj = docs[i];
+            var aux = JSON.stringify(obj._id);
+              if (aux == JSON.stringify(request.body._id)) {
+                let flag = true
+                if(request.body.estado!=undefined && request.body.estado!=""){
+                  obj.estado = request.body.estado;
+                }
+                if(request.body.capacidad!=undefined){
 
+            //validacion capacidad
+            if(request.body.capacidad<=0){
+              response.status(400).send("capacidad debe ser positiva");
+              flag = false
+            }else{
+              obj.capacidad = request.body.capacidad;
+            }
 
+                }
 
+                if(flag == true){
+                //devuelve vacio cuando es exitoso?
+                let result = obj.save();
+                response.send(result);
+                }else{
+                  //NO HACE NADA
+                }
 
+              }
+          }
+        }
+      );
+  } catch (error) {
+    response.status(500).send(error);
+  }
+}
 
-
-
-
-
-
-
+});
 
 //Get eventos
-app.get("/events", jsonParser, async (request, response) => {
-  if (request.query.nombre) {
+app.get("/eventos", jsonParser, async (request, response) => {
+  if (request.query.nombre != undefined) {
+    //crash si hay mas de un evento con el nombre solicitado
     try {
-      var result =
-        await Evento.find(/*x => x.nombre === request.query.nombre*/).exec(
-          (err, docs) => {
-            //console.log(typeof users.name)
+      var result = await Evento.find().exec((err, docs) => {
             for (var i = 0, l = docs.length; i < l; i++) {
               var obj = docs[i];
-              //console.log(typeof(obj))
-              if (obj.nombre) {
-                if (obj.nombre === request.query.nombre) {
+                if (obj.nombre == request.query.nombre) {
                   response.send(obj);
                 }
-              }
             }
           }
         );
@@ -309,6 +339,16 @@ app.get("/events", jsonParser, async (request, response) => {
     }
   }
 });
+
+
+
+
+
+
+
+
+
+
 
 //Get datos de vendedor
 app.get("/vendedores", jsonParser, async (request, response) => {
@@ -468,52 +508,7 @@ app.post(
     }
   });*/
 
-//Put estado de evento y/o limite de tickets
-app.put("/events", jsonParser, async (request, response) => {
-  // try {
-  /*  var evento = await Evento.findById(request.body._id).exec();
-    //evento.set(request.body);
-    evento.estado=request.body.estado
-    var result = await evento.save();
-    response.send(result);*/
-    if(request.body._id==undefined || (request.body.estado==undefined &&
-      request.body.capacidad==undefined) ||
-      request.body._id==""||(request.body.estado==""
-      && request.body.capacidad<0)){
-      response.status(400).send("Faltan parametros ");
-    }else{
-  try {
-    var result =
-      await Evento.find(/*x => x.nombre === request.query.nombre*/).exec(
-        (err, docs) => {
-          //console.log(typeof users.name)
-          for (var i = 0, l = docs.length; i < l; i++) {
-            var obj = docs[i];
-            var aux = JSON.stringify(obj._id);
 
-            if (aux) {
-              // console.log(request.body._id,typeof(request.body._id))
-              if (aux === JSON.stringify(request.body._id)) {
-                if(request.body.estado!=undefined && request.body.estado!=""){
-                  obj.estado = request.body.estado;
-                }
-                if(request.body.capacidad!=undefined && request.body.capacidad>=0){
-                  obj.capacidad = request.body.capacidad;
-                }
-                console.log(obj);
-                var result = obj.save();
-                response.send(result);
-              }
-            }
-          }
-        }
-      );
-  } catch (error) {
-    response.status(500).send(error);
-  }
-}
-
-});
 
 //Post empresa
 app.post(
@@ -613,17 +608,6 @@ app.get("/tweets", (req, res, next) => {
 //fin borrar
 
 //plantillas rest
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-/*app.post('/', (req, res) => {
-  res.send('Got a POST request')
-})*/
-
-app.put("/user", (req, res) => {
-  //res.send("Got a PUT request at /user");
-});
 
 app.delete("/user", (req, res) => {
   res.send("Got a DELETE request at /user");
