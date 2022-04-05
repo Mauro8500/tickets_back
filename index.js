@@ -62,7 +62,7 @@ async function main() {
 }
 
 //Post evento
-app.post("/events", upload.array("images", 12), jsonParser, async (request, response) => {
+app.post("/eventos", upload.array("images", 12), jsonParser, async (request, response) => {
     if(request.body.nombre==undefined || request.body.lugar==undefined ||
       request.body.capacidad==undefined || request.body.estado==undefined ||
       request.body.organizador==undefined || request.body.fechaInicio==undefined ||
@@ -130,9 +130,139 @@ app.post("/events", upload.array("images", 12), jsonParser, async (request, resp
 );
 
 
+//Post cliente
+app.post("/clientes",jsonParser,async (request, response) => {
+    if(request.body.nombre1==undefined || request.body.apellido1==undefined ||
+       request.body.apellido2==undefined || request.body.fechaNacimiento==undefined ||
+       request.body.ci==undefined || request.body.mail==undefined || 
+       request.body.password==undefined ||request.body.repassword==undefined||
+       request.body.departamento==undefined || request.body.ciudad==undefined ||
+      request.body.nombre1==""||request.body.apellido1==""||
+      request.body.apellido2==""||request.body.fechaNacimiento==""||
+      request.body.ci==""||request.body.mail==""||
+      request.body.password==""||request.body.repassword==""||
+      request.body.departamento==""||request.body.ciudad==""){
+      response.status(400).send("Se requieren los parametros nombre1, apellido1, apellido2, fechaNacimiento, ci, mail, password, repassword, departamento y ciudad");
+    }else{
+    try {
+      //validacion fecha de nacimiento
+      let aux = new Date()
+      aux.setHours(0, 0, 0, 0);
+      let aux2 = new Date(request.body.fechaNacimiento)
+      aux2.setHours(0, 0, 0, 0);
+      aux2.setDate(aux2.getDate()+1)
+      if(aux2>=aux){
+        response.status(400).send("fechaNacimiento debe ser menor a actual");
+      }else{
+        //validacion password y su repeticion
+          if(request.body.password != request.body.repassword){
+            response.status(400).send("Los parametros password y repassword deben ser iguales");
+          }else{
+              var cliente = new Cliente({
+                nombre1: request.body.nombre1,
+                apellido1: request.body.apellido1,
+                apellido2: request.body.apellido2,
+                fechaNacimiento: request.body.fechaNacimiento,
+                password: request.body.password,
+                ci: request.body.ci,
+                mail: request.body.mail,
+                departamento: request.body.departamento,
+                ciudad: request.body.ciudad
+              });
+              //adicion de apellido si existe
+              if(request.body.nombre2!=undefined && request.body.nombre2!=""){
+                cliente.nombre2 = request.body.nombre2
+              }else{
+                cliente.nombre2 = ""
+              }
+              //adicion de telefono si existe
+              if(request.body.telefono!=undefined){
+                cliente.telefono=request.body.telefono
+              }else{
+                cliente.telefono = -1
+              }
 
+              var result = await cliente.save();
+              response.send(result);
+          }
+          
+      }
+      
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+  }
+);
 
+//Post vendedor
+app.post("/vendedores",jsonParser,async (request, response) => {
+  if(request.body.nombre1==undefined || request.body.apellido1==undefined ||
+     request.body.apellido2==undefined || request.body.fechaNacimiento==undefined ||
+     request.body.ci==undefined || request.body.mail==undefined || 
+     request.body.password==undefined ||request.body.repassword==undefined||
+     request.body.departamento==undefined || request.body.ciudad==undefined ||
+     request.body.banco==undefined || request.body.cuenta==undefined ||
+    request.body.nombre1==""||request.body.apellido1==""||
+    request.body.apellido2==""||request.body.fechaNacimiento==""||
+    request.body.ci==""||request.body.mail==""||
+    request.body.password==""||request.body.repassword==""||
+    request.body.departamento==""||request.body.ciudad==""||
+    request.body.banco==""||request.body.cuenta==""){
+    response.status(400).send("Se requieren los parametros nombre1, apellido1, apellido2, fechaNacimiento, ci, mail, password, repassword, departamento, ciudad, banco y cuenta");
+  }else{
+  try {
+    //validacion fecha de nacimiento
+    let aux = new Date()
+    aux.setHours(0, 0, 0, 0);
+    let aux2 = new Date(request.body.fechaNacimiento)
+    aux2.setHours(0, 0, 0, 0);
+    aux2.setDate(aux2.getDate()+1)
+    if(aux2>=aux){
+      response.status(400).send("fechaNacimiento debe ser menor a actual");
+    }else{
+      //validacion password y su repeticion
+        if(request.body.password != request.body.repassword){
+          response.status(400).send("Los parametros password y repassword deben ser iguales");
+        }else{
+            var vendedor = new Vendedor({
+              nombre1: request.body.nombre1,
+              apellido1: request.body.apellido1,
+              apellido2: request.body.apellido2,
+              fechaNacimiento: request.body.fechaNacimiento,
+              password: request.body.password,
+              ci: request.body.ci,
+              mail: request.body.mail,
+              departamento: request.body.departamento,
+              ciudad: request.body.ciudad,
+              banco: request.body.banco,
+              cuenta: request.body.cuenta
+            });
+            //adicion de apellido si existe
+            if(request.body.nombre2!=undefined && request.body.nombre2!=""){
+              vendedor.nombre2 = request.body.nombre2
+            }else{
+              vendedor.nombre2 = ""
+            }
+            //adicion de telefono si existe
+            if(request.body.telefono!=undefined){
+              vendedor.telefono=request.body.telefono
+            }else{
+              vendedor.telefono = -1
+            }
 
+            var result = await vendedor.save();
+            response.send(result);
+        }
+        
+    }
+    
+  } catch (error) {
+    response.status(500).send(error);
+  }
+}
+}
+);
 
 
 
@@ -384,118 +514,6 @@ app.put("/events", jsonParser, async (request, response) => {
 }
 
 });
-
-//Post cliente
-app.post(
-  "/clientes",
-  jsonParser,
-  async (request, response) => {
-    if(request.body.nombre1==undefined || request.body.apellido1==undefined ||
-       request.body.apellido2==undefined || request.body.fechaNacimiento==undefined ||
-       request.body.password==undefined || request.body.ci==undefined ||
-       request.body.mail==undefined || request.body.mail=="" ||
-      request.body.nombre1==""||request.body.apellido1==""||
-      request.body.apellido2==""||request.body.fechaNacimiento==""||
-      request.body.password==""||request.body.ci==""){
-      response.status(400).send("Los campos de primer nombre, primer apellido, segundo apellido, contraseña, ci y mail no pueden estar vacios");
-    }else{
-    try {
-
-      var cliente = new Cliente({
-        nombre1: request.body.nombre1,
-        nombre2: request.body.nombre2,
-        apellido1: request.body.apellido1,
-        apellido2: request.body.apellido2,
-        fechaNacimiento: request.body.fechaNacimiento,
-        password: request.body.password,
-        ci: request.body.ci,
-        mail: request.body.mail
-      });
-      if(request.body.fechaNacimiento>=new Date()){
-        response.status(400).send("Fecha de nacimiento inválida");
-      }else{
-
-          if(request.body.password != request.body.repassword){
-            response.status(400).send("Las contraseñas no coinciden");
-          }else{
-            //if(request.body.precio>=0){
-
-
-              var result = await cliente.save();
-          response.send(result);
-
-            /*}else{
-              //no hace nada
-            }*/
-          }
-          
-      }
-      
-    } catch (error) {
-      response.status(500).send(error);
-    }
-  }
-  }
-);
-
-
-//Post vendedor
-app.post(
-  "/vendedores",
-  jsonParser,
-  async (request, response) => {
-    if(request.body.nombre1==undefined || request.body.apellido1==undefined ||
-       request.body.apellido2==undefined || request.body.fechaNacimiento==undefined ||
-       request.body.password==undefined || request.body.ci==undefined ||
-       request.body.mail==undefined || request.body.mail=="" ||
-      request.body.nombre1==""||request.body.apellido1==""||
-      request.body.apellido2==""||request.body.fechaNacimiento==""||
-      request.body.password==""||request.body.ci=="" ||
-      request.body.ciudad==undefined||request.body.ciudad==""){
-      response.status(400).send("Los campos de primer nombre, primer apellido, segundo apellido, contraseña, ci, mail y ciudad no pueden estar vacios");
-    }else{
-    try {
-
-      var vendedor = new Vendedor({
-        nombre1: request.body.nombre1,
-        nombre2: request.body.nombre2,
-        apellido1: request.body.apellido1,
-        apellido2: request.body.apellido2,
-        fechaNacimiento: request.body.fechaNacimiento,
-        password: request.body.password,
-        ci: request.body.ci,
-        mail: request.body.mail,
-        pais: request.body.pais,
-        ciudad: request.body.ciudad,
-        telefono: request.body.telefono,
-        cuenta: request.body.cuenta
-      });
-      if(request.body.fechaNacimiento>=new Date()){
-        response.status(400).send("Fecha de nacimiento inválida");
-      }else{
-
-          if(request.body.password != request.body.repassword){
-            response.status(400).send("Las contraseñas no coinciden");
-          }else{
-            //if(request.body.precio>=0){
-
-
-              var result = await vendedor.save();
-          response.send(result);
-
-            /*}else{
-              //no hace nada
-            }*/
-          }
-          
-      }
-      
-    } catch (error) {
-      response.status(500).send(error);
-    }
-  }
-  }
-);
 
 //Post empresa
 app.post(

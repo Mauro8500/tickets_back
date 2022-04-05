@@ -10,6 +10,9 @@ const clienteSchema = mongoose.Schema({
   ci: String,
   mail: String,
   telefono: Number,
+  //pais: String,
+  departamento: String,
+  ciudad: String
 });
 
 module.exports = mongoose.model("Cliente", clienteSchema);

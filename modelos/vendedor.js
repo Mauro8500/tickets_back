@@ -10,11 +10,11 @@ const vendedorSchema = mongoose.Schema({
   ci: String,
   mail: String,
   telefono: Number,
-  pais: String,
+  //pais: String,
   departamento: String,
   ciudad: String,
   banco: String,
-  cuenta: String,
+  cuenta: String
 });
 
 module.exports = mongoose.model("Vendedor", vendedorSchema);

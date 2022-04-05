@@ -1,5 +1,5 @@
 ### Test post evento
-POST http://localhost:3000/events
+POST http://localhost:3000/eventos
 Content-Type: application/json
 
 {
@@ -8,32 +8,13 @@ Content-Type: application/json
     "capacidad":1000,
     "estado":"pendiente",
     "organizador":"empresa1",
-    "fechaInicio":"2022-04-05",
-    "fechaFin":"2022-04-05",
+    "fechaInicio":"2022-04-06",
+    "fechaFin":"2022-04-06",
     "precio":0.01
     //TODO imagenes
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Test post comprador
+### Test post cliente
 POST http://localhost:3000/clientes
 Content-Type: application/json
 
@@ -42,11 +23,14 @@ Content-Type: application/json
     "nombre2": "diego",
     "apellido1": "mendizabal",
     "apellido2": "mostajo",
-    "fechaNacimiento":"1999-12-12",
-    "password":"0000",
-    "repassword":"0000",
+    "fechaNacimiento":"2022-03-05",
+    "password":"0000a",
+    "repassword":"0000a",
     "ci":"6105591",
-    "mail":"carlos.mendizabal@ucb.edu.bo"
+    "mail":"carlos.mendizabal@ucb.edu.bo",
+    "telefono":75822287,
+    "departamento":"la paz",
+    "ciudad":"el alto"
 }
 
 ### Test post vendedor
@@ -58,16 +42,38 @@ Content-Type: application/json
     "nombre2": "diego",
     "apellido1": "mendizabal",
     "apellido2": "mostajo",
-    "fechaNacimiento":"1999-12-12",
-    "password":"0000",
-    "repassword":"0000",
+    "fechaNacimiento":"2022-04-04",
+    "password":"0000a",
+    "repassword":"0000a",
     "ci":"6105591",
     "mail":"carlos.mendizabal@ucb.edu.bo",
-    "pais":"Bolivia",
-    "ciudad":"La Paz",
-    "telefono":"748299291",
-    "cuenta":"21311541231"
+    "telefono":75822287,
+    "departamento":"la paz",
+    "ciudad":"el alto",
+    "banco":"bcp",
+    "cuenta":"3341-2312"
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### Test get datos de clientes
 GET http://localhost:3000/clientes
