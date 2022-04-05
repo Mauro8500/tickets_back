@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const eventoSchema = mongoose.Schema({
   nombre: String,
+  //lugar = pais, estado/departamento, provincia, ciudad, direccion?
   lugar: String,
   capacidad: Number,
   estado: String,
@@ -9,6 +10,7 @@ const eventoSchema = mongoose.Schema({
   fechaInicio: Date,
   fechaFin:Date,
   precio: Number,
+  //TODO imagenes
   imagenes: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -18,5 +20,3 @@ const eventoSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("Evento", eventoSchema);
-
-//evento y sus datos

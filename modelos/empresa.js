@@ -1,6 +1,7 @@
+//TODO
 const mongoose = require('mongoose')
 
-const empSchema = mongoose.Schema({
+const empresaSchema = mongoose.Schema({
     
     nombre:String,
     descripcion:String,
@@ -8,7 +9,4 @@ const empSchema = mongoose.Schema({
  
 })
 
-module.exports = mongoose.model('Empresa', empSchema)
-
-
-//estructura de empresa o encargado de las ventas de tickets
+module.exports = mongoose.model('Empresa', empresaSchema)

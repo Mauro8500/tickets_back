@@ -1,3 +1,38 @@
+### Test post evento
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "nombre": "conciertofin",
+    "lugar":"estadio hernando siles",
+    "capacidad":1000,
+    "estado":"pendiente",
+    "organizador":"empresa1",
+    "fechaInicio":"2022-04-05",
+    "fechaFin":"2022-04-05",
+    "precio":0.01
+    //TODO imagenes
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### Test post comprador
 POST http://localhost:3000/clientes
 Content-Type: application/json
@@ -41,21 +76,6 @@ Content-Type: application/json
 ### Test get datos de vendedores
 GET http://localhost:3000/vendedores
 Content-Type: application/json
-
-### Test post evento
-POST http://localhost:3000/events
-Content-Type: application/json
-
-{
-    "nombre": "conciertofin",
-    "lugar":"estadio hernando siles",
-    "capacidad":1000,
-    "estado":"pendiente",
-    "organizador":"empresa1",
-    "fechaInicio":"2020-12-12",
-    "fechaFin":"2020-12-29",
-    "precio":0.01
-}
 
 ### Test put estado de evento
 PUT http://localhost:3000/events

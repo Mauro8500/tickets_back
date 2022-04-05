@@ -1,14 +1,15 @@
-//Express config (localhost:3000)
 const express = require("express");
 const app = express();
 const port = 3000;
 
 const mongoose = require("mongoose");
+
+//Modelos
 const Evento = require("./modelos/evento");
 const Empresa = require("./modelos/empresa");
-const Comprador = require("./modelos/comprador");
 const Vendedor = require("./modelos/vendedor");
 const Cliente = require("./modelos/cliente");
+
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 var fs = require("fs");
@@ -28,7 +29,7 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage });
 
-//inicio prueba mail
+//configuracion mail
 const nodemailer = require("nodemailer");
 const req = require("express/lib/request");
 
@@ -49,7 +50,6 @@ var mailOptions = {
   subject: "Sending Email using Node.js",
   text: "That was easy!",
 };
-//fin prueba mail
 
 //Mongo
 
@@ -60,6 +60,93 @@ async function main() {
     console.log("Database Connected");
   });
 }
+
+//Post evento
+app.post("/events", upload.array("images", 12), jsonParser, async (request, response) => {
+    if(request.body.nombre==undefined || request.body.lugar==undefined ||
+      request.body.capacidad==undefined || request.body.estado==undefined ||
+      request.body.organizador==undefined || request.body.fechaInicio==undefined ||
+       request.body.fechaFin==undefined || request.body.precio==undefined ||
+      request.body.nombre==""||request.body.lugar==""||
+      request.body.estado==""||request.body.organizador==""||
+      request.body.fechaInicio==""||request.body.fechaFin==""){
+      response.status(400).send("Se requieren los parametros nombre, lugar, capacidad, estado, organizador, fechaInicio, fechaFin y precio");
+    }else{
+    try {
+      //TODO images
+      var images = [];
+      for (var i = 0; i < request.files; i++) {
+        images.push({
+          data: fs.readFileSync(
+            path.join(__dirname + "/uploads/" + request.files[i].filename)
+          ),
+          contentType: "image/png",
+        });
+      }
+
+      //validacion fechas
+      if(request.body.fechaInicio>request.body.fechaFin){
+        response.status(400).send("fechaInicio debe ser menor o igual a fechaFin");
+      }else{
+        let aux = new Date()
+        aux.setHours(0, 0, 0, 0);
+        let aux2 = new Date(request.body.fechaInicio)
+        aux2.setHours(0, 0, 0, 0);
+        aux2.setDate(aux2.getDate()+1)
+        if(aux2<aux){
+          response.status(400).send("fechaInicio no puede ser menor a actual");
+        }else{
+        //validacion precio
+          if(request.body.precio<0){
+            response.status(400).send("precio no puede ser negativo");
+          }else{
+            //validacion capacidad
+            if(request.body.capacidad<=0){
+              response.status(400).send("capacidad debe ser positiva");
+            }else{
+              var evento = new Evento({
+                nombre: request.body.nombre,
+                lugar: request.body.lugar,
+                capacidad: request.body.capacidad,
+                estado: request.body.estado,
+                organizador: request.body.organizador,
+                fechaInicio: request.body.fechaInicio,
+                fechaFin: request.body.fechaFin,
+                precio: request.body.precio,
+                imagenes: images,
+              });
+              var result = await evento.save();
+              response.send(result);
+            }
+          }
+        }
+      }
+      
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+  }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //Get eventos
 app.get("/events", jsonParser, async (request, response) => {
@@ -242,22 +329,6 @@ app.post(
   }
 );
 
-//Post evento deprecated
-//app.post('/events', jsonParser, (req, res, next) => {
-
-//req.body.nombre
-//req.body.lugar
-//req.body.capacidad
-//req.body.estado
-//req.body.organizador
-//req.body.fecha
-//req.body.precio
-
-//res.send('Got a POST request')
-
-/*req.body.beginDate
-    req.body.endDate*/
-
 //TODO pasar transporter a post empresas
 /*transporter.sendMail(mailOptions, function(error, info){
     if (error) {
@@ -266,17 +337,6 @@ app.post(
       console.log('Email sent: ' + info.response);
     }
   });*/
-
-//})
-
-//Put imagenes de evento deprecated
-//TODO metodo oficial y agregar endpoint o campos para imagenes
-//app.put('/events/images', jsonParser, (req, res, next) => {
-//req.body.images
-//req.body.eventName or eventId
-//TODO put images of event method
-// res.send('Got a PUT request')
-// })
 
 //Put estado de evento y/o limite de tickets
 app.put("/events", jsonParser, async (request, response) => {

@@ -9,8 +9,7 @@ const clienteSchema = mongoose.Schema({
   password: String,
   ci: String,
   mail: String,
+  telefono: Number,
 });
 
 module.exports = mongoose.model("Cliente", clienteSchema);
-
-//evento y sus datos

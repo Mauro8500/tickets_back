@@ -9,13 +9,12 @@ const vendedorSchema = mongoose.Schema({
   password: String,
   ci: String,
   mail: String,
-  pais: String,
-  ciudad: String,
   telefono: Number,
+  pais: String,
+  departamento: String,
+  ciudad: String,
+  banco: String,
   cuenta: String,
-    //tipoDeEmpresa: String,
 });
 
 module.exports = mongoose.model("Vendedor", vendedorSchema);
-
-//vendedor de tickets
