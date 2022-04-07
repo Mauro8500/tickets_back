@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 
 //Modelos
 const Evento = require("./modelos/evento");
-const Empresa = require("./modelos/empresa");
 const Vendedor = require("./modelos/vendedor");
 const Cliente = require("./modelos/cliente");
 
@@ -17,8 +16,8 @@ var path = require("path");
 
 //crypto
 //const cryptoRandomString = require('crypto-random-string');
-var randomstring = require("randomstring");
-const crypto = require('crypto');
+//var randomstring = require("randomstring");
+//const crypto = require('crypto');
 
 //Storage de imagenes
 var multer = require("multer");
@@ -58,6 +57,10 @@ async function main() {
     console.log("Database Connected");
   });
 }
+
+app.listen(port, () => {
+  console.log(`Tickets listening on port ${port}`);
+});
 
 //Post evento
 app.post("/eventos", upload.array("images", 12), jsonParser, async (request, response) => {
@@ -234,8 +237,9 @@ app.post("/vendedores",jsonParser,async (request, response) => {
     request.body.ci==""||request.body.mail==""||
     request.body.password==""||request.body.repassword==""||
     request.body.departamento==""||request.body.ciudad==""||
-    request.body.banco==""||request.body.cuenta==""){
-    response.status(400).send("Se requieren los parametros nombre1, apellido1, apellido2, fechaNacimiento, ci, mail, password, repassword, departamento, ciudad, banco y cuenta");
+    request.body.banco==""||request.body.cuenta==""||
+    request.body.esEmpresa==undefined){
+    response.status(400).send("Se requieren los parametros nombre1, apellido1, apellido2, fechaNacimiento, ci, mail, password, repassword, departamento, ciudad, banco, cuenta y esEmpresa");
   }else{
   try {
     //validacion fecha de nacimiento
@@ -263,7 +267,8 @@ app.post("/vendedores",jsonParser,async (request, response) => {
               ciudad: request.body.ciudad,
               estado: false,
               banco: request.body.banco,
-              cuenta: request.body.cuenta
+              cuenta: request.body.cuenta,
+              esEmpresa: request.body.esEmpresa
             });
             //adicion de apellido si existe
             if(request.body.nombre2!=undefined && request.body.nombre2!=""){
@@ -276,6 +281,27 @@ app.post("/vendedores",jsonParser,async (request, response) => {
               vendedor.telefono=request.body.telefono
             }else{
               vendedor.telefono = -1
+            }
+
+            if(request.body.nombreEmpresa!=undefined){
+              vendedor.nombreEmpresa=request.body.nombreEmpresa
+            }else{
+              vendedor.nombreEmpresa=""
+            }
+            if(request.body.telefonoEmpresa!=undefined){
+              vendedor.telefonoEmpresa=request.body.telefonoEmpresa
+            }else{
+              vendedor.telefonoEmpresa=0
+            }
+            if(request.body.direccionEmpresa!=undefined){
+              vendedor.direccionEmpresa=request.body.direccionEmpresa
+            }else{
+              vendedor.direccionEmpresa=""
+            }
+            if(request.body.sitioWebEmpresa!=undefined){
+              vendedor.sitioWebEmpresa=request.body.sitioWebEmpresa
+            }else{
+              vendedor.sitioWebEmpresa=""
             }
 
             var result = await vendedor.save();
@@ -436,260 +462,43 @@ app.get("/confirmacionvendedores", jsonParser, async (request, response) => {
   }
 });
 
-
-
-
-//Refactorizado hasta aca
-
-//Get datos de vendedor
+//Get vendedores
 app.get("/vendedores", jsonParser, async (request, response) => {
-  /*if (request.query._id) {
+  if (request.query._id != undefined) {
     try {
-      var result =
-        await Empresas.find(*//*x => x.nombre === request.query.nombre*//*).exec(
-          (err, docs) => {*/
-            //console.log(typeof users.name)
-            /*for (var i = 0, l = docs.length; i < l; i++) {
-              var obj = docs[i];*/
-              //console.log(typeof(obj))
-            /*  if (obj._id) {
-                if (obj._id === request.query._id) {
-                  response.send(obj);
-                }
-              }
-            }
-          }
-        );
-    } catch (error) {
-      response.status(500).send(error);
-    }
-
-    try {
-      var result = await Empresas.findById(request.query._id).exec();
-      response.send(result);
-    } catch (error) {
-      response.status(500).send(error);
-    }
-  } else {*/
-    try {
-      var result = await Vendedor.find().exec();
-      response.send(result);
-    } catch (error) {
-      response.status(500).send(error);
-    }
-  //}
-});
-
-//Get datos de clientes
-app.get("/clientes", jsonParser, async (request, response) => {
-  /*if (request.query._id) {
-    try {
-      var result =
-        await Empresas.find(*//*x => x.nombre === request.query.nombre*//*).exec(
-          (err, docs) => {*/
-            //console.log(typeof users.name)
-            /*for (var i = 0, l = docs.length; i < l; i++) {
-              var obj = docs[i];*/
-              //console.log(typeof(obj))
-            /*  if (obj._id) {
-                if (obj._id === request.query._id) {
-                  response.send(obj);
-                }
-              }
-            }
-          }
-        );
-    } catch (error) {
-      response.status(500).send(error);
-    }
-
-    try {
-      var result = await Empresas.findById(request.query._id).exec();
-      response.send(result);
-    } catch (error) {
-      response.status(500).send(error);
-    }
-  } else {*/
-    try {
-      var result = await Cliente.find().exec();
-      response.send(result);
-    } catch (error) {
-      response.status(500).send(error);
-    }
-  //}
-});
-
-//Post evento
-app.post(
-  "/events",
-  upload.array("images", 12),
-  jsonParser,
-  async (request, response) => {
-    if(request.body.nombre==undefined || request.body.fechaInicio==undefined || request.body.fechaFin==undefined || request.body.precio==undefined ||
-      request.body.nombre==""||request.body.fechaInicio==""||request.body.fechaFin==""||request.body.precio==""){
-      response.status(400).send("Los campos de nombre, fecha inicial, fecha final y precio no pueden estar vacios");
-    }else{
-    try {
-      var images = [];
-      for (var i = 0; i < request.files; i++) {
-        images.push({
-          data: fs.readFileSync(
-            path.join(__dirname + "/uploads/" + request.files[i].filename)
-          ),
-          contentType: "image/png",
-        });
-      }
-
-      var evento = new Evento({
-        nombre: request.body.nombre,
-        lugar: request.body.lugar,
-        capacidad: request.body.capacidad,
-        estado: request.body.estado,
-        organizador: request.body.organizador,
-        fechaInicio: request.body.fechaInicio,
-        fechaFin: request.body.fechaFin,
-        precio: request.body.precio,
-        imagenes: images,
-      });
-      if(request.body.fechaInicio>request.body.fechaFin){
-        response.status(400).send("La fecha de inicio no puede ser mayor a la fecha en la que finaliza el evento");
-      }else{
-        if(request.body.fechaInicio<=request.body.fechaFin){
-
-
-
-          if(request.body.precio<0){
-            response.status(400).send("El precio no puede ser negativo");
-          }else{
-            if(request.body.precio>=0){
-
-
-              var result = await evento.save();
-          response.send(result);
-
-          
-
-
-            }else{
-              //no hace nada
-            }
-          }
-          
-          
-          
-
-        }else{
-          //No hace nada
-        }
-      }
-      
-    } catch (error) {
-      response.status(500).send(error);
-    }
-  }
-  }
-);
-
-
-
-
-
-//Post empresa
-app.post(
-  "/empresas",
-  jsonParser,
-  async (request, response) => {
-    if(request.body.nombre==undefined || request.body.nombre==""){
-      response.status(400).send("El campo de nombre no puede estar vacio");
-    }else{
-    try {
-
-      var empresa = new Empresa({
-        nombre: request.body.nombre,
-        descripcion: request.body.descripcion,
-        ercargado: request.body.encargado
-      });
-     /* if(request.body.fechaNacimiento>=new Date()){
-        response.status(400).send("Fecha de nacimiento inválida");
-      }else{*/
-            //if(request.body.precio>=0){
-
-
-              var result = await empresa.save();
-          response.send(result);
-
-            /*}else{
-              //no hace nada
-            }*/
-          
-      //}
-      
-    } catch (error) {
-      response.status(500).send(error);
-    }
-  }
-  }
-);
-
-//Get empresa
-app.get("/empresas", jsonParser, async (request, response) => {
-  if (request.query._id) {
-    try {
-      var result =
-        await Empresa.find(/*x => x.nombre === request.query.nombre*/).exec(
-          (err, docs) => {
-            //console.log(typeof users.name)
-            for (var i = 0, l = docs.length; i < l; i++) {
-              var obj = docs[i];
-              //console.log(typeof(obj))
-              if (obj._id) {
-                if (obj._id === request.query._id) {
-                  response.send(obj);
-                }
-              }
-            }
-          }
-        );
-    } catch (error) {
-      response.status(500).send(error);
-    }
-
-    try {
-      var result = await Empresa.findById(request.query._id).exec();
+      let result = await Vendedor.findById(request.query._id).exec();
       response.send(result);
     } catch (error) {
       response.status(500).send(error);
     }
   } else {
     try {
-      var result = await Empresa.find().exec();
+      let result = await Vendedor.find().exec();
       response.send(result);
     } catch (error) {
       response.status(500).send(error);
     }
   }
 });
-//inicio borrar
-/* app.get("/hello",jsonParser, (req, res, next) => {
-    res.json('hello '+req.query.name);
-});
-rows.forEach(function(user) {
 
-app.get("/tweets", (req, res, next) => {
-      
-        redis.llen(req.query.user_id, function (err, result) {
-            redis.lrange(req.query.user_id, 0,result, function (err, result) {
-              if (err) {
-                console.error(err);
-              } else {
-                console.log(result); // Promise resolves to "bar"
-              }
-            });
-          }
-        });
-      res.json(rows);
-});*/
-//fin borrar
+//Get clientes
+app.get("/clientes", jsonParser, async (request, response) => {
+  if (request.query._id !=undefined) {
+    try {
+      let result = await Cliente.findById(request.query._id).exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  } else {
+    try {
+      let result = await Cliente.find().exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+});
 
 //plantillas rest
 
@@ -697,6 +506,4 @@ app.delete("/user", (req, res) => {
   res.send("Got a DELETE request at /user");
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+//Ok hasta aqui

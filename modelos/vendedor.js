@@ -15,7 +15,12 @@ const vendedorSchema = mongoose.Schema({
   ciudad: String,
   estado: Boolean,
   banco: String,
-  cuenta: String
+  cuenta: String,
+  esEmpresa: Boolean,
+  nombreEmpresa: String,
+  telefonoEmpresa: Number,
+  direccionEmpresa: String,
+  sitioWebEmpresa: String
 });
 
 module.exports = mongoose.model("Vendedor", vendedorSchema);

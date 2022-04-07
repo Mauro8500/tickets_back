@@ -33,7 +33,7 @@ Content-Type: application/json
     "ciudad":"el alto"
 }
 
-### Test post vendedor
+### Test post vendedor (persona)
 POST http://localhost:3000/vendedores
 Content-Type: application/json
 
@@ -51,7 +51,34 @@ Content-Type: application/json
     "departamento":"la paz",
     "ciudad":"el alto",
     "banco":"bcp",
-    "cuenta":"3341-2312"
+    "cuenta":"3341-2312",
+    "esEmpresa":false
+}
+
+### Test post vendedor (empresa)
+POST http://localhost:3000/vendedores
+Content-Type: application/json
+
+{
+    "nombre1": "carlos",
+    "nombre2": "diego",
+    "apellido1": "mendizabal",
+    "apellido2": "mostajo",
+    "fechaNacimiento":"2022-04-04",
+    "password":"0000a",
+    "repassword":"0000a",
+    "ci":"6105591",
+    "mail":"illanesm965@gmail.com",
+    "telefono":75822287,
+    "departamento":"la paz",
+    "ciudad":"el alto",
+    "banco":"bcp",
+    "cuenta":"3341-2312",
+    "esEmpresa":true,
+    "nombreEmpresa": "Coca Cola",
+    "telefonoEmpresa": 273829,
+    "direccionEmpresa": "camino a viacha",
+    "sitioWebEmpresa": "www.cocacola.com"
 }
 
 ### Test put estado de evento
@@ -90,24 +117,6 @@ Content-Type: application/json
 GET http://localhost:3000/eventos?nombre=eventoa
 Content-Type: application/json
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Refactorizado hasta aca
-
 ### Test get datos de clientes
 GET http://localhost:3000/clientes
 Content-Type: application/json
@@ -116,32 +125,13 @@ Content-Type: application/json
 GET http://localhost:3000/vendedores
 Content-Type: application/json
 
-### Test get datos de empresas
-GET http://localhost:3000/empresas
+### Test get datos de un cliente
+GET http://localhost:3000/clientes?_id=624c7344b62affab47f0fdb9
 Content-Type: application/json
 
-### Test post empresa
-POST http://localhost:3000/empresas
+### Test get datos de un vendedor
+GET http://localhost:3000/vendedores?_id=624f2c35c9724fd7af080005
 Content-Type: application/json
-
-{
-    "nombre": "coca cola",
-    "descripcion": "descripcion",
-    "encargado":"carlos.mendizabal@ucb.edu.bo"
-}
-
-### Test get datos de empresa por nombre TODO
-GET http://localhost:3000/managers?_id="a"
-Content-Type: application/json
-
-### Test put imagenes de evento
-PUT http://localhost:3000/events
-Content-Type: application/json
-
-{
-    "_id": "62473dd8186af518eb739b23",
-    "images":[]
-}
 
 //plantillas calls
 
@@ -152,3 +142,21 @@ Content-Type: application/json
 {
     "id": "user"
 }
+
+//Ok hasta aqui
+
+// falta implementar imagenes en post evento
+// get para imagenes de evento? o directo vuelven como parametro del get evento?
+// autenticacion de vendedor para post evento
+// autenticacion de vendedor para put evento (estado=cancelado)
+// annadir campo disponibilidad(disponible/fuera de stock) a get de eventos
+
+### Test put imagenes de evento
+PUT http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "_id": "62473dd8186af518eb739b23",
+    "images":[]
+}
+
