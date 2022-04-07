@@ -13,6 +13,7 @@ const vendedorSchema = mongoose.Schema({
   //pais: String,
   departamento: String,
   ciudad: String,
+  estado: Boolean,
   banco: String,
   cuenta: String
 });

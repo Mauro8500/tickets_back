@@ -12,7 +12,8 @@ const clienteSchema = mongoose.Schema({
   telefono: Number,
   //pais: String,
   departamento: String,
-  ciudad: String
+  ciudad: String,
+  estado: Boolean
 });
 
 module.exports = mongoose.model("Cliente", clienteSchema);

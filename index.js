@@ -15,6 +15,11 @@ const jsonParser = bodyParser.json();
 var fs = require("fs");
 var path = require("path");
 
+//crypto
+//const cryptoRandomString = require('crypto-random-string');
+var randomstring = require("randomstring");
+const crypto = require('crypto');
+
 //Storage de imagenes
 var multer = require("multer");
 
@@ -39,17 +44,10 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true, //use SSL
   auth: {
-    user: "illanesm965@gmail.com",
-    pass: "PRUEBAS123!@",
+    user: "carlosmendizabaltickets@gmail.com",
+    pass: "tallersistemastickets",
   },
 });
-
-var mailOptions = {
-  from: "illanesm965@gmail.com",
-  to: "carlos.mendizabal@ucb.edu.bo",
-  subject: "Sending Email using Node.js",
-  text: "That was easy!",
-};
 
 //Mongo
 
@@ -167,7 +165,8 @@ app.post("/clientes",jsonParser,async (request, response) => {
                 ci: request.body.ci,
                 mail: request.body.mail,
                 departamento: request.body.departamento,
-                ciudad: request.body.ciudad
+                ciudad: request.body.ciudad,
+                estado: false
               });
               //adicion de apellido si existe
               if(request.body.nombre2!=undefined && request.body.nombre2!=""){
@@ -183,6 +182,33 @@ app.post("/clientes",jsonParser,async (request, response) => {
               }
 
               var result = await cliente.save();
+
+              //codigo confirmador no implementado
+              /*let randomString = randomstring.generate(128);
+              let hash = crypto.createHash('sha256').update(randomString).digest('hex');
+              var confirmador = new Confirmador({
+                hash: hash,
+                mail: request.body.mail
+              });
+              result = await confirmador.save();
+              */
+
+              let mailOptions = {
+                from: "carlosmendizabaltickets@gmail.com",
+                to: request.body.mail,
+                subject: "Confirmación de correo electrónico",
+                text: "Para activar tu cuenta ingresa a este link:",
+                html: '<p>Ingresa a <a href="http://localhost:3000/confirmacionclientes?c=' + result._id + '">este link</a> para confirmar tu dirección de correo electrónico</p>'
+              };
+
+              transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log('Email sent: ' + info.response);
+                }
+              });
+
               response.send(result);
           }
           
@@ -235,6 +261,7 @@ app.post("/vendedores",jsonParser,async (request, response) => {
               mail: request.body.mail,
               departamento: request.body.departamento,
               ciudad: request.body.ciudad,
+              estado: false,
               banco: request.body.banco,
               cuenta: request.body.cuenta
             });
@@ -252,6 +279,23 @@ app.post("/vendedores",jsonParser,async (request, response) => {
             }
 
             var result = await vendedor.save();
+
+            let mailOptions = {
+              from: "carlosmendizabaltickets@gmail.com",
+              to: request.body.mail,
+              subject: "Confirmación de correo electrónico",
+              text: "Para activar tu cuenta ingresa a este link:",
+              html: '<p>Ingresa a <a href="http://localhost:3000/confirmacionvendedores?v=' + result._id + '">este link</a> para confirmar tu dirección de correo electrónico</p>'
+            };
+
+            transporter.sendMail(mailOptions, function(error, info){
+              if (error) {
+                console.log(error);
+              } else {
+                console.log('Email sent: ' + info.response);
+              }
+            });
+
             response.send(result);
         }
         
@@ -340,15 +384,62 @@ app.get("/eventos", jsonParser, async (request, response) => {
   }
 });
 
+//Get confirmacion clientes
+app.get("/confirmacionclientes", jsonParser, async (request, response) => {
+  if (request.query.c != undefined || request.query.c != "") {
+    let idConfirmacion = ""
+    try {
+      var result = await Cliente.find().exec((err, docs) => {
+            for (let i = 0, l = docs.length; i < l; i++) {
+              let obj = docs[i];
+                if (obj._id == request.query.c) {
+                  obj.estado = true
+                  obj.save()
+                  response.send("Su correo ha sido confirmado. Ahora puede realizar transacciones");
+                }                   
+            }
+          }
+        );
+        
+    } catch (error) {
+      response.status(500).send(error);
+    }
+
+  } else {
+    response.status(400).send("solicitud invalida");
+  }
+});
+
+//Get confirmacion vendedores
+app.get("/confirmacionvendedores", jsonParser, async (request, response) => {
+  if (request.query.v != undefined || request.query.v != "") {
+    let idConfirmacion = ""
+    try {
+      var result = await Vendedor.find().exec((err, docs) => {
+            for (let i = 0, l = docs.length; i < l; i++) {
+              let obj = docs[i];
+                if (obj._id == request.query.v) {
+                  obj.estado = true
+                  obj.save()
+                  response.send("Su correo ha sido confirmado. Ahora puede realizar transacciones");
+                }                   
+            }
+          }
+        );
+        
+    } catch (error) {
+      response.status(500).send(error);
+    }
+
+  } else {
+    response.status(400).send("solicitud invalida");
+  }
+});
 
 
 
 
-
-
-
-
-
+//Refactorizado hasta aca
 
 //Get datos de vendedor
 app.get("/vendedores", jsonParser, async (request, response) => {
@@ -499,14 +590,7 @@ app.post(
   }
 );
 
-//TODO pasar transporter a post empresas
-/*transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
-  });*/
+
 
 
 

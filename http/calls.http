@@ -27,7 +27,7 @@ Content-Type: application/json
     "password":"0000a",
     "repassword":"0000a",
     "ci":"6105591",
-    "mail":"carlos.mendizabal@ucb.edu.bo",
+    "mail":"illanesm965@gmail.com",
     "telefono":75822287,
     "departamento":"la paz",
     "ciudad":"el alto"
@@ -46,7 +46,7 @@ Content-Type: application/json
     "password":"0000a",
     "repassword":"0000a",
     "ci":"6105591",
-    "mail":"carlos.mendizabal@ucb.edu.bo",
+    "mail":"illanesm965@gmail.com",
     "telefono":75822287,
     "departamento":"la paz",
     "ciudad":"el alto",
@@ -106,7 +106,7 @@ Content-Type: application/json
 
 
 
-
+//Refactorizado hasta aca
 
 ### Test get datos de clientes
 GET http://localhost:3000/clientes
