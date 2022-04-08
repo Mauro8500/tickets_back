@@ -74,16 +74,15 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
       response.status(400).send("Se requieren los parametros nombre, lugar, capacidad, estado, organizador, fechaInicio, fechaFin y precio");
     }else{
     try {
-      //TODO images
-      var images = [];
-      for (var i = 0; i < request.files; i++) {
-        images.push({
-          data: fs.readFileSync(
-            path.join(__dirname + "/uploads/" + request.files[i].filename)
-          ),
+      var imagenes = [];
+      //if(request.files != undefined){
+      for (let i = 0; i < request.files; i++) {
+        imagenes.push({
+          data: fs.readFileSync(path.join(__dirname + "/uploads/" + request.files[i].filename)),
           contentType: "image/png",
         });
       }
+    //}
 
       //validacion fechas
       if(request.body.fechaInicio>request.body.fechaFin){
@@ -114,7 +113,7 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
                 fechaInicio: request.body.fechaInicio,
                 fechaFin: request.body.fechaFin,
                 precio: request.body.precio,
-                imagenes: images,
+                imagenes: imagenes,
               });
               var result = await evento.save();
               response.send(result);
@@ -507,3 +506,6 @@ app.delete("/user", (req, res) => {
 });
 
 //Ok hasta aqui
+
+//Put imagenes
+//Agregar imagenes a response de get eventos?

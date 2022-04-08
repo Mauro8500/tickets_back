@@ -10,13 +10,16 @@ const eventoSchema = mongoose.Schema({
   fechaInicio: Date,
   fechaFin:Date,
   precio: Number,
-  //TODO imagenes
   imagenes: [
+    {data: Buffer, contentType: String},
+  ],
+  //codigo antiguo
+ /*imagenes: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Imagen",
     },
-  ],
+  ],*/
 });
 
 module.exports = mongoose.model("Evento", eventoSchema);

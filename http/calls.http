@@ -8,10 +8,9 @@ Content-Type: application/json
     "capacidad":1000,
     "estado":"pendiente",
     "organizador":"empresa1",
-    "fechaInicio":"2022-04-06",
-    "fechaFin":"2022-04-06",
+    "fechaInicio":"2022-04-08",
+    "fechaFin":"2022-04-08",
     "precio":0.01
-    //TODO imagenes
 }
 
 ### Test post cliente
@@ -150,13 +149,4 @@ Content-Type: application/json
 // autenticacion de vendedor para post evento
 // autenticacion de vendedor para put evento (estado=cancelado)
 // annadir campo disponibilidad(disponible/fuera de stock) a get de eventos
-
-### Test put imagenes de evento
-PUT http://localhost:3000/events
-Content-Type: application/json
-
-{
-    "_id": "62473dd8186af518eb739b23",
-    "images":[]
-}
 
