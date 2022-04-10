@@ -51,7 +51,8 @@ Content-Type: application/json
     "ciudad":"el alto",
     "banco":"bcp",
     "cuenta":"3341-2312",
-    "esEmpresa":false
+    "esEmpresa":false,
+    "smsActivado": true
 }
 
 ### Test post vendedor (empresa)
@@ -132,6 +133,38 @@ Content-Type: application/json
 GET http://localhost:3000/vendedores?_id=624f2c35c9724fd7af080005
 Content-Type: application/json
 
+### Test post compra
+POST http://localhost:3000/compras
+Content-Type: application/json
+
+{
+  "idEvento": "a",
+  "nombreEvento": "conciertoa",
+  "direccionEvento": "centro prado calle 233",
+  "fechaInicio": "2022-06-06",
+  "fechaFin": "2022-06-06",
+  "idCliente": "",
+  "nombre1": "carlos",
+  "nombre2": "diego",
+  "apellido1": "mendizabal",
+  "apellido2": "mostajo",
+  "nit": 324243,
+  "cantidadTickets": 3,
+  "precioUnitario": 350,
+  "correoCliente": "illanesm965@gmail.com",
+  "numTelefono": 75822287,
+  "smsActivado": true
+}
+
+### Test put smsActivado de cliente
+PUT http://localhost:3000/clientes
+Content-Type: application/json
+
+{
+    "_id": "624c85c2c029328daeaa69a7",
+    "smsActivado":true
+}
+
 //plantillas calls
 
 ### Test Delete
@@ -149,4 +182,17 @@ Content-Type: application/json
 // autenticacion de vendedor para post evento
 // autenticacion de vendedor para put evento (estado=cancelado)
 // annadir campo disponibilidad(disponible/fuera de stock) a get de eventos
+
+
+//2do sprint
+//ws post compras
+//ws get compras con request.query=_idCliente
+//http call get compras?_idCliente=sadasd
+//metodo para generar factura de una compra
+//metodo para descargar tickets de una compra
+//aniadir correo a post de compra que envia factura y tickets a cliente (formato PDF)
+//metodo de envio de confirmacion de compra por sms para cliente
+//implementar pago con tarjeta de credito/debito (validar tarjeta y notificar si no existe, no tiene fondos o algun caso parecido)
+
+
 

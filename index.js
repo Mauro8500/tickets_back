@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const Evento = require("./modelos/evento");
 const Vendedor = require("./modelos/vendedor");
 const Cliente = require("./modelos/cliente");
+const Compra = require("./modelos/compra");
 
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
@@ -183,6 +184,12 @@ app.post("/clientes",jsonParser,async (request, response) => {
                 cliente.telefono = -1
               }
 
+              if(request.body.smsActivado!=undefined){
+                cliente.telefono=request.body.smsActivado
+              }else{
+                cliente.telefono = false
+              }
+
               var result = await cliente.save();
 
               //codigo confirmador no implementado
@@ -332,8 +339,6 @@ app.post("/vendedores",jsonParser,async (request, response) => {
 }
 }
 );
-
-
 
 //Put estado de evento y/o limite de tickets
 app.put("/eventos", jsonParser, async (request, response) => {
@@ -498,6 +503,117 @@ app.get("/clientes", jsonParser, async (request, response) => {
     }
   }
 });
+
+//Put smsActivado para cliente
+app.put("/clientes", jsonParser, async (request, response) => {
+  if(request.body._id==undefined || request.body.smsActivado==undefined ||
+    request.body._id==""){
+    response.status(400).send("Se requieren los parametros _id y smsActivado");
+  }else{
+try {
+  await Cliente.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+          var aux = JSON.stringify(obj._id);
+            if (aux == JSON.stringify(request.body._id)) {
+                obj.smsActivado = request.body.smsActivado;
+              //devuelve vacio cuando es exitoso?
+              let result = obj.save();
+              response.send(result);
+            }
+        }
+      }
+    );
+} catch (error) {
+  response.status(500).send(error);
+}
+}
+
+});
+
+//Post compras
+app.post("/compras",jsonParser,async (request, response) => {
+  if(request.body.idEvento==undefined || request.body.nombreEvento==undefined ||
+     request.body.direccionEvento==undefined || request.body.fechaInicio==undefined ||
+     request.body.fechaFin==undefined || request.body.idCliente==undefined || 
+     request.body.nombre1==undefined ||request.body.apellido1==undefined||
+     request.body.apellido2==undefined || request.body.nit==undefined ||
+     request.body.cantidadTickets==undefined || request.body.precioUnitario==undefined ||
+     request.body.correoCliente==undefined || request.body.smsActivado==undefined ||
+    request.body.idEvento==""||request.body.nombreEvento==""||
+    request.body.direccionEvento==""||request.body.fechaInicio==""||
+    request.body.fechaFin==""||request.body.idCliente==""||
+    request.body.nombre1==""||request.body.apellido1==""||
+    request.body.apellido2=="" || request.body.correoCliente==""){
+    response.status(400).send("Se requieren los parametros idEvento, nombreEvento, direccionEvento, fechaInicio, fechaFin, idCliente, nombre1, apellido1, apellido2, nit, cantidadTickets, precioUnitario, correoCliente y smsActivado");
+  }else{
+    if(request.body.cantidadTickets<=0){
+      response.status(400).send("cantidadTickets debe ser positiva")
+    }else{
+  try {
+            var compra = new Compra({
+              idEvento: request.body.idEvento,
+              nombreEvento: request.body.nombreEvento,
+              direccionEvento: request.body.direccionEvento,
+              fechaInicio: request.body.fechaInicio,
+              fechaFin: request.body.fechaFin,
+              idCliente: request.body.idCliente,
+              nombre1: request.body.nombre1,
+              apellido1: request.body.apellido1,
+              apellido2: request.body.apellido2,
+              nit: request.body.nit,
+              cantidadTickets: request.body.cantidadTickets,
+              precioUnitario: request.body.precioUnitario,
+              estado: "completada"
+            });
+            
+            //TODO stripe, numeroFactura y numeroSFV
+            compra.numeroFactura = 13
+            compra.numeroSFV = 14
+            
+            compra.fechaEmision = new Date()
+            compra.total = cantidadTickets * precioUnitario
+            if(request.body.nombre2!=undefined && request.body.nombre2!=""){
+              compra.nombre2 = request.body.nombre2
+            }else{
+              compra.nombre2 = ""
+            }
+
+            //if stripe exitoso recien ejecutar lo que continua
+            var result = await compra.save();
+
+            if(smsActivado == true){
+              //mandar sms
+            }
+
+            //crear pdf de factura y agregar al correo
+            //crear un pdf para cada ticket y agregarlo/s al correo
+            let mailOptions = {
+              from: "carlosmendizabaltickets@gmail.com",
+              to: request.body.correoCliente,
+              subject: "Recibo de compra y tickets",
+              //text: "Para activar tu cuenta ingresa a este link:",
+              //html: '<p>Ingresa a <a href="http://localhost:3000/confirmacionvendedores?v=' + result._id + '">este link</a> para confirmar tu dirección de correo electrónico</p>'
+            };
+
+            transporter.sendMail(mailOptions, function(error, info){
+              if (error) {
+                console.log(error);
+              } else {
+                console.log('Email sent: ' + info.response);
+              }
+            });
+
+            response.send(result);
+        
+    
+  } catch (error) {
+    response.status(500).send(error);
+  }
+}
+}
+}
+);
 
 //plantillas rest
 
