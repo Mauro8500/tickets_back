@@ -49,6 +49,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+//Requerimientos para creacion de PDF
+const PDFDocument = require('pdfkit');
+
+//Requerimiento para sms
+const Vonage = require('@vonage/server-sdk')
+const vonage = new Vonage({
+  apiKey: "a78af8e2",
+  apiSecret: "rc1nFsSEsCAZ9hI6"
+})
+
 //Mongo
 
 main().catch((err) => console.log(err));
@@ -192,9 +202,9 @@ app.post("/clientes",jsonParser,async (request, response) => {
               }
 
               if(request.body.smsActivado!=undefined){
-                cliente.telefono=request.body.smsActivado
+                cliente.smsActivado=request.body.smsActivado
               }else{
-                cliente.telefono = false
+                cliente.smsActivado = false
               }
 
               var result = await cliente.save();
@@ -518,15 +528,24 @@ app.put("/clientes", jsonParser, async (request, response) => {
     response.status(400).send("Se requieren los parametros _id y smsActivado");
   }else{
 try {
+  let flag
   await Cliente.find().exec((err, docs) => {
         for (let i = 0, l = docs.length; i < l; i++) {
           var obj = docs[i];
           var aux = JSON.stringify(obj._id);
             if (aux == JSON.stringify(request.body._id)) {
+              flag = true
+
+              if(flag == true){
                 obj.smsActivado = request.body.smsActivado;
               //devuelve vacio cuando es exitoso?
+              flag=false
               let result = obj.save();
               response.send(result);
+              }else{
+                //NO HACE NADA
+              }
+
             }
         }
       }
@@ -577,30 +596,101 @@ app.post("/compras",jsonParser,async (request, response) => {
             //TODO stripe, numeroFactura y numeroSFV
             compra.numeroFactura = 13
             compra.numeroSFV = 14
-            
+
             compra.fechaEmision = new Date()
-            compra.total = cantidadTickets * precioUnitario
+            compra.total = compra.cantidadTickets * compra.precioUnitario
+
             if(request.body.nombre2!=undefined && request.body.nombre2!=""){
               compra.nombre2 = request.body.nombre2
             }else{
               compra.nombre2 = ""
             }
 
-            //if stripe exitoso recien ejecutar lo que continua
             var result = await compra.save();
 
-            if(smsActivado == true){
+            //Comentado para no quedar sin credito
+            /*if(request.body.smsActivado == true){
               //mandar sms
+              const from = "Tickets"
+              const to = "591"+request.body.numTelefono
+              const text = 'Su compra ha sido registrada exitosamente'
+
+              vonage.message.sendSms(from, to, text, (err, responseData) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    if(responseData.messages[0]['status'] === "0") {
+                        console.log("Message sent successfully.");
+                    } else {
+                        console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+                    }
+                }
+            })
+            }*/
+
+                        //crear pdf de factura
+                        let pdf = new PDFDocument;
+                        pdf.fontSize(15).text(' Número de factura: '+compra.numeroFactura+
+                        '\n Número SFV: '+compra.numeroSFV+'\n Actividad económica: Venta de tickets \n Título: Factura \n NIT: '+
+                        compra.nit+'\n Fecha de emisión: '+formatearFecha(compra.fechaEmision)+'\n Código del evento: '+compra.idEvento+'\n Nombre del evento: '+compra.nombreEvento+
+                        '\n Fecha de inicio: '+formatearFecha(compra.fechaInicio)+'       Fecha de conclusión: '+formatearFecha(compra.fechaFin)+
+                        '\n Nombre: '+capitalizarPrimeraLetra(compra.apellido1)+" "+capitalizarPrimeraLetra(compra.apellido2)
+                        +" "+capitalizarPrimeraLetra(compra.nombre1)+" "+capitalizarPrimeraLetra(compra.nombre2)+'\n Cantidad de tickets: '+
+                        compra.cantidadTickets+'\n Precio unitario: '+compra.precioUnitario+'           Costo total: '+compra.total
+                        , 100, 100);
+
+            // Adding an image in the pdf.
+            /*pdf.image('download3.jpg', {
+              fit: [300, 300],
+              align: 'center',
+              valign: 'center'
+            });*/
+            
+            //pdf.addPage().fontSize(15).text('Generating PDF with the help of pdfkit', 100, 100);
+              
+            // Apply some transforms and render an SVG path with the 
+            // 'even-odd' fill rule
+            /*pdf.scale(0.6).translate(470, -380)
+            .path('M 250,75 L 323,301 131,161 369,161 177,301 z')
+            .fill('red', 'even-odd')
+            .restore();*/
+             
+            // Add some text with annotations
+            /*pdf.addPage().fillColor('blue').text('The link for GeeksforGeeks website', 100, 100)
+              .link(100, 100, 160, 27, 'https://www.geeksforgeeks.org/');*/
+            pdf.end();
+
+            //agregar factura al mail
+            var attachments = []
+            attachments.push({filename: 'factura.pdf',
+            content: pdf,
+            contentType: 'application/pdf'
+          })
+
+          //crear tickets y agregarlos al mail
+            for(let i = 0; i<compra.cantidadTickets; i++){
+              let pdfaux =new PDFDocument
+              pdfaux.fontSize(15).text(' Número de factura: '+compra.numeroFactura+
+                        '\n Número SFV: '+compra.numeroSFV+'\n NIT: '+
+                        compra.nit+'\n Fecha de emisión: '+formatearFecha(compra.fechaEmision)+'\n Código del evento: '+compra.idEvento+'\n Nombre del evento: '+compra.nombreEvento+
+                        '\n Fecha de inicio: '+formatearFecha(compra.fechaInicio)+'       Fecha de conclusión: '+formatearFecha(compra.fechaFin)+
+                        '\n Nombre: '+capitalizarPrimeraLetra(compra.apellido1)+" "+capitalizarPrimeraLetra(compra.apellido2)
+                        +" "+capitalizarPrimeraLetra(compra.nombre1)+" "+capitalizarPrimeraLetra(compra.nombre2)+'\n Ticket '+(i+1)+"/"+compra.cantidadTickets
+                        , 100, 100);
+              pdfaux.end();
+              attachments.push(
+                {
+                  filename: 'ticket'+(i+1)+'.pdf',
+                  content: pdfaux,
+                  contentType: 'application/pdf'
+              })
             }
 
-            //crear pdf de factura y agregar al correo
-            //crear un pdf para cada ticket y agregarlo/s al correo
             let mailOptions = {
               from: "carlosmendizabaltickets@gmail.com",
               to: request.body.correoCliente,
               subject: "Recibo de compra y tickets",
-              //text: "Para activar tu cuenta ingresa a este link:",
-              //html: '<p>Ingresa a <a href="http://localhost:3000/confirmacionvendedores?v=' + result._id + '">este link</a> para confirmar tu dirección de correo electrónico</p>'
+              attachments: attachments
             };
 
             transporter.sendMail(mailOptions, function(error, info){
@@ -621,6 +711,43 @@ app.post("/compras",jsonParser,async (request, response) => {
 }
 }
 );
+
+//Get compras
+app.get("/compras", jsonParser, async (request, response) => {
+  if (request.query._id ==undefined || request.query._id == "") {
+    response.status(400).send("Se requiere el parametro _id")
+  } else {
+    try {
+
+
+      let vectorCompras = []
+      let result = await Compra.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+            if (obj.idCliente == request.query._id) {
+              vectorCompras.push(obj)
+            }
+        }
+        response.send(vectorCompras);
+      })
+
+
+
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+});
+
+function capitalizarPrimeraLetra(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function formatearFecha(dateObj){
+  return dateObj.getUTCDate()+ "/" + (dateObj.getUTCMonth() + 1) + "/"+dateObj.getUTCFullYear() ;
+}
+
+
 
 //plantillas rest
 

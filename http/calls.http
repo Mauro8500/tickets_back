@@ -69,7 +69,7 @@ Content-Type: application/json
     "repassword":"0000a",
     "ci":"6105591",
     "mail":"illanesm965@gmail.com",
-    "telefono":75822287,
+    "telefono":59175822287,
     "departamento":"la paz",
     "ciudad":"el alto",
     "banco":"bcp",
@@ -139,11 +139,11 @@ Content-Type: application/json
 
 {
   "idEvento": "a",
-  "nombreEvento": "conciertoa",
+  "nombreEvento": "conciertf",
   "direccionEvento": "centro prado calle 233",
   "fechaInicio": "2022-06-06",
   "fechaFin": "2022-06-06",
-  "idCliente": "",
+  "idCliente": "6254efe0e70d04c8bac51cd5",
   "nombre1": "carlos",
   "nombre2": "diego",
   "apellido1": "mendizabal",
@@ -151,17 +151,21 @@ Content-Type: application/json
   "nit": 324243,
   "cantidadTickets": 3,
   "precioUnitario": 350,
-  "correoCliente": "illanesm965@gmail.com",
-  "numTelefono": 75822287,
+  "correoCliente": "carlosmendizabaltickets@gmail.com",
+  "numTelefono": 73747260,
   "smsActivado": true
 }
+
+### Test get compras de un cliente
+GET http://localhost:3000/compras?_id=bbb
+Content-Type: application/json
 
 ### Test put smsActivado de cliente
 PUT http://localhost:3000/clientes
 Content-Type: application/json
 
 {
-    "_id": "624c85c2c029328daeaa69a7",
+    "_id": "6254efe0e70d04c8bac51cd5",
     "smsActivado":true
 }
 
@@ -183,16 +187,8 @@ Content-Type: application/json
 // autenticacion de vendedor para put evento (estado=cancelado)
 // annadir campo disponibilidad(disponible/fuera de stock) a get de eventos
 
-
 //2do sprint
-//ws post compras
-//ws get compras con request.query=_idCliente
-//http call get compras?_idCliente=sadasd
-//metodo para generar factura de una compra
-//metodo para descargar tickets de una compra
-//aniadir correo a post de compra que envia factura y tickets a cliente (formato PDF)
 //metodo de envio de confirmacion de compra por sms para cliente
-//implementar pago con tarjeta de credito/debito (validar tarjeta y notificar si no existe, no tiene fondos o algun caso parecido)
-
-
+//frontend postcompras
+//frontend getcompras con idCliente
 
