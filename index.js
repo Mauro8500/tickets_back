@@ -70,9 +70,19 @@ async function main() {
 }
 
 //CORS HEADERS MIDDLEWARE
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "YOUR-DOMAIN.TLD"); // update to match the domain you will make the request from
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});*/
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH');
+      return res.status(200).json({});
+  };
   next();
 });
 
@@ -409,13 +419,15 @@ app.get("/eventos", jsonParser, async (request, response) => {
   if (request.query.nombre != undefined) {
     //crash si hay mas de un evento con el nombre solicitado
     try {
+      let auxJson = []
       var result = await Evento.find().exec((err, docs) => {
             for (var i = 0, l = docs.length; i < l; i++) {
               var obj = docs[i];
                 if (obj.nombre == request.query.nombre) {
-                  response.send(obj);
+                  auxJson.push(obj)
                 }
             }
+            response.send(auxJson);
           }
         );
     } catch (error) {
@@ -747,15 +759,10 @@ function formatearFecha(dateObj){
   return dateObj.getUTCDate()+ "/" + (dateObj.getUTCMonth() + 1) + "/"+dateObj.getUTCFullYear() ;
 }
 
-
-
 //plantillas rest
-
 app.delete("/user", (req, res) => {
   res.send("Got a DELETE request at /user");
 });
-
-//Ok hasta aqui
 
 //Put imagenes
 //Agregar imagenes a response de get eventos?

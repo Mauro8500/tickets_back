@@ -3,13 +3,13 @@ POST http://localhost:3000/eventos
 Content-Type: application/json
 
 {
-    "nombre": "eventoc",
+    "nombre": "eventoac",
     "lugar":"estadio hernando siles",
     "capacidad":1000,
     "estado":"pendiente",
     "organizador":"empresa1",
-    "fechaInicio":"2022-04-08",
-    "fechaFin":"2022-04-08",
+    "fechaInicio":"2022-04-15",
+    "fechaFin":"2022-04-15",
     "precio":0.01
 }
 
@@ -114,7 +114,7 @@ GET http://localhost:3000/eventos
 Content-Type: application/json
 
 ### Test get eventos por nombre
-GET http://localhost:3000/eventos?nombre=eventoa
+GET http://localhost:3000/eventos?nombre=eventoc
 Content-Type: application/json
 
 ### Test get datos de clientes
@@ -179,16 +179,20 @@ Content-Type: application/json
     "id": "user"
 }
 
-//Ok hasta aqui
-
 // falta implementar imagenes en post evento
 // get para imagenes de evento? o directo vuelven como parametro del get evento?
-// autenticacion de vendedor para post evento
-// autenticacion de vendedor para put evento (estado=cancelado)
 // annadir campo disponibilidad(disponible/fuera de stock) a get de eventos
-
-//2do sprint
 //metodo de envio de confirmacion de compra por sms para cliente
-//frontend postcompras
-//frontend getcompras con idCliente
+//integracion todos los metodos y check jira
+// autenticacion especificada en jira
 
+//metodos para integracion
+//post evento
+//put estado evento
+//put estado y capacidad evento
+//put capacidad evento
+//get datos de un cliente
+//get datos de un vendedor
+//post compra
+//get compras de un cliente
+//put smsActivado de un cliente
