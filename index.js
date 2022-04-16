@@ -99,7 +99,7 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
       request.body.nombre==""||request.body.lugar==""||
       request.body.estado==""||request.body.organizador==""||
       request.body.fechaInicio==""||request.body.fechaFin==""){
-      response.status(400).send("Se requieren los parametros nombre, lugar, capacidad, estado, organizador, fechaInicio, fechaFin y precio");
+      response.status(400).send("Se requieren los parametros nombre, lugar, capacidad, organizador, fechaInicio, fechaFin y precio");
     }else{
     try {
       var imagenes = [];
@@ -136,7 +136,7 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
                 nombre: request.body.nombre,
                 lugar: request.body.lugar,
                 capacidad: request.body.capacidad,
-                estado: request.body.estado,
+                estado: "pendiente",
                 organizador: request.body.organizador,
                 fechaInicio: request.body.fechaInicio,
                 fechaFin: request.body.fechaFin,
@@ -763,6 +763,3 @@ function formatearFecha(dateObj){
 app.delete("/user", (req, res) => {
   res.send("Got a DELETE request at /user");
 });
-
-//Put imagenes
-//Agregar imagenes a response de get eventos?

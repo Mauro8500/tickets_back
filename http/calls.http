@@ -6,7 +6,6 @@ Content-Type: application/json
     "nombre": "eventoac",
     "lugar":"estadio hernando siles",
     "capacidad":1000,
-    "estado":"pendiente",
     "organizador":"empresa1",
     "fechaInicio":"2022-04-15",
     "fechaFin":"2022-04-15",
@@ -29,7 +28,8 @@ Content-Type: application/json
     "mail":"illanesm965@gmail.com",
     "telefono":75822287,
     "departamento":"la paz",
-    "ciudad":"el alto"
+    "ciudad":"el alto",
+    "smsActivado": true
 }
 
 ### Test post vendedor (persona)
@@ -51,8 +51,7 @@ Content-Type: application/json
     "ciudad":"el alto",
     "banco":"bcp",
     "cuenta":"3341-2312",
-    "esEmpresa":false,
-    "smsActivado": true
+    "esEmpresa":false
 }
 
 ### Test post vendedor (empresa)
@@ -178,21 +177,3 @@ Content-Type: application/json
 {
     "id": "user"
 }
-
-// falta implementar imagenes en post evento
-// get para imagenes de evento? o directo vuelven como parametro del get evento?
-// annadir campo disponibilidad(disponible/fuera de stock) a get de eventos
-//metodo de envio de confirmacion de compra por sms para cliente
-//integracion todos los metodos y check jira
-// autenticacion especificada en jira
-
-//metodos para integracion
-//post evento
-//put estado evento
-//put estado y capacidad evento
-//put capacidad evento
-//get datos de un cliente
-//get datos de un vendedor
-//post compra
-//get compras de un cliente
-//put smsActivado de un cliente
