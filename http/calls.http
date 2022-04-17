@@ -104,12 +104,16 @@ PUT http://localhost:3000/eventos
 Content-Type: application/json
 
 {
-    "_id": "624c85c2c029328daeaa69a7",
-    "capacidad":-100
+    "_id": "6256f1cebfc2711bfd6103cc",
+    "capacidad":200
 }
 
 ### Test get eventos
 GET http://localhost:3000/eventos
+Content-Type: application/json
+
+### Test get eventos de un vendedor
+GET http://localhost:3000/eventos?organizador=empresa1
 Content-Type: application/json
 
 ### Test get eventos por nombre
@@ -125,7 +129,7 @@ GET http://localhost:3000/vendedores
 Content-Type: application/json
 
 ### Test get datos de un cliente
-GET http://localhost:3000/clientes?_id=624c7344b62affab47f0fdb9
+GET http://localhost:3000/clientes?_id=6254efe0e70d04c8bac51cd5
 Content-Type: application/json
 
 ### Test get datos de un vendedor
@@ -151,12 +155,12 @@ Content-Type: application/json
   "cantidadTickets": 3,
   "precioUnitario": 350,
   "correoCliente": "carlosmendizabaltickets@gmail.com",
-  "numTelefono": 73747260,
+  "telefono": 73747260,
   "smsActivado": true
 }
 
 ### Test get compras de un cliente
-GET http://localhost:3000/compras?_id=bbb
+GET http://localhost:3000/compras?_id=6254efe0e70d04c8bac51cd5
 Content-Type: application/json
 
 ### Test put smsActivado de cliente

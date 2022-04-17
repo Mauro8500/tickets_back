@@ -259,6 +259,7 @@ app.post("/clientes",jsonParser,async (request, response) => {
 
 //Post vendedor
 app.post("/vendedores",jsonParser,async (request, response) => {
+  var existeVendedor = false
   if(request.body.nombre1==undefined || request.body.apellido1==undefined ||
      request.body.apellido2==undefined || request.body.fechaNacimiento==undefined ||
      request.body.ci==undefined || request.body.mail==undefined || 
@@ -274,105 +275,126 @@ app.post("/vendedores",jsonParser,async (request, response) => {
     request.body.esEmpresa==undefined){
     response.status(400).send("Se requieren los parametros nombre1, apellido1, apellido2, fechaNacimiento, ci, mail, password, repassword, departamento, ciudad, banco, cuenta y esEmpresa");
   }else{
-  try {
-    //validacion fecha de nacimiento
-    let aux = new Date()
-    aux.setHours(0, 0, 0, 0);
-    let aux2 = new Date(request.body.fechaNacimiento)
-    aux2.setHours(0, 0, 0, 0);
-    aux2.setDate(aux2.getDate()+1)
-    if(aux2>=aux){
-      response.status(400).send("fechaNacimiento debe ser menor a actual");
-    }else{
-      //validacion password y su repeticion
-        if(request.body.password != request.body.repassword){
-          response.status(400).send("Los parametros password y repassword deben ser iguales");
+try {
+  let result =  Vendedor.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          let obj = docs[i];
+            if (JSON.stringify(obj.mail) == JSON.stringify(request.body.mail) && existeVendedor==false) {
+              existeVendedor=true
+            }                   
+        }
+        if(existeVendedor==true){
+          response.status(400).send("body.mail ya tiene una cuenta asociada");
         }else{
-            var vendedor = new Vendedor({
-              nombre1: request.body.nombre1,
-              apellido1: request.body.apellido1,
-              apellido2: request.body.apellido2,
-              fechaNacimiento: request.body.fechaNacimiento,
-              password: request.body.password,
-              ci: request.body.ci,
-              mail: request.body.mail,
-              departamento: request.body.departamento,
-              ciudad: request.body.ciudad,
-              estado: false,
-              banco: request.body.banco,
-              cuenta: request.body.cuenta,
-              esEmpresa: request.body.esEmpresa
-            });
-            //adicion de apellido si existe
-            if(request.body.nombre2!=undefined && request.body.nombre2!=""){
-              vendedor.nombre2 = request.body.nombre2
+            //validacion fecha de nacimiento
+            let aux = new Date()
+            aux.setHours(0, 0, 0, 0);
+            let aux2 = new Date(request.body.fechaNacimiento)
+            aux2.setHours(0, 0, 0, 0);
+            aux2.setDate(aux2.getDate()+1)
+            if(aux2>=aux){
+              response.status(400).send("fechaNacimiento debe ser menor a actual");
             }else{
-              vendedor.nombre2 = ""
+              //validacion password y su repeticion
+                if(request.body.password != request.body.repassword){
+                  response.status(400).send("Los parametros password y repassword deben ser iguales");
+                }else{
+                    var vendedor = new Vendedor({
+                      nombre1: request.body.nombre1,
+                      apellido1: request.body.apellido1,
+                      apellido2: request.body.apellido2,
+                      fechaNacimiento: request.body.fechaNacimiento,
+                      password: request.body.password,
+                      ci: request.body.ci,
+                      mail: request.body.mail,
+                      departamento: request.body.departamento,
+                      ciudad: request.body.ciudad,
+                      estado: false,
+                      banco: request.body.banco,
+                      cuenta: request.body.cuenta,
+                      esEmpresa: request.body.esEmpresa
+                    });
+                    //adicion de apellido si existe
+                    if(request.body.nombre2!=undefined && request.body.nombre2!=""){
+                      vendedor.nombre2 = request.body.nombre2
+                    }else{
+                      vendedor.nombre2 = ""
+                    }
+                    //adicion de telefono si existe
+                    if(request.body.telefono!=undefined){
+                      vendedor.telefono=request.body.telefono
+                    }else{
+                      vendedor.telefono = -1
+                    }
+        
+                    if(request.body.nombreEmpresa!=undefined){
+                      vendedor.nombreEmpresa=request.body.nombreEmpresa
+                    }else{
+                      vendedor.nombreEmpresa=""
+                    }
+                    if(request.body.telefonoEmpresa!=undefined){
+                      vendedor.telefonoEmpresa=request.body.telefonoEmpresa
+                    }else{
+                      vendedor.telefonoEmpresa=0
+                    }
+                    if(request.body.direccionEmpresa!=undefined){
+                      vendedor.direccionEmpresa=request.body.direccionEmpresa
+                    }else{
+                      vendedor.direccionEmpresa=""
+                    }
+                    if(request.body.sitioWebEmpresa!=undefined){
+                      vendedor.sitioWebEmpresa=request.body.sitioWebEmpresa
+                    }else{
+                      vendedor.sitioWebEmpresa=""
+                    }
+        
+                    var result = vendedor.save();
+        
+                    let mailOptions = {
+                      from: "carlosmendizabaltickets@gmail.com",
+                      to: request.body.mail,
+                      subject: "Confirmación de correo electrónico",
+                      text: "Para activar tu cuenta ingresa a este link:",
+                      html: '<p>Ingresa a <a href="http://localhost:3000/confirmacionvendedores?v=' + result._id + '">este link</a> para confirmar tu dirección de correo electrónico</p>'
+                    };
+        
+                    transporter.sendMail(mailOptions, function(error, info){
+                      if (error) {
+                        console.log(error);
+                      } else {
+                        console.log('Email sent: ' + info.response);
+                      }
+                    });
+        
+                    response.send(result);
+                }
+                
             }
-            //adicion de telefono si existe
-            if(request.body.telefono!=undefined){
-              vendedor.telefono=request.body.telefono
-            }else{
-              vendedor.telefono = -1
-            }
-
-            if(request.body.nombreEmpresa!=undefined){
-              vendedor.nombreEmpresa=request.body.nombreEmpresa
-            }else{
-              vendedor.nombreEmpresa=""
-            }
-            if(request.body.telefonoEmpresa!=undefined){
-              vendedor.telefonoEmpresa=request.body.telefonoEmpresa
-            }else{
-              vendedor.telefonoEmpresa=0
-            }
-            if(request.body.direccionEmpresa!=undefined){
-              vendedor.direccionEmpresa=request.body.direccionEmpresa
-            }else{
-              vendedor.direccionEmpresa=""
-            }
-            if(request.body.sitioWebEmpresa!=undefined){
-              vendedor.sitioWebEmpresa=request.body.sitioWebEmpresa
-            }else{
-              vendedor.sitioWebEmpresa=""
-            }
-
-            var result = await vendedor.save();
-
-            let mailOptions = {
-              from: "carlosmendizabaltickets@gmail.com",
-              to: request.body.mail,
-              subject: "Confirmación de correo electrónico",
-              text: "Para activar tu cuenta ingresa a este link:",
-              html: '<p>Ingresa a <a href="http://localhost:3000/confirmacionvendedores?v=' + result._id + '">este link</a> para confirmar tu dirección de correo electrónico</p>'
-            };
-
-            transporter.sendMail(mailOptions, function(error, info){
-              if (error) {
-                console.log(error);
-              } else {
-                console.log('Email sent: ' + info.response);
-              }
-            });
-
-            response.send(result);
+            
+        
         }
         
-    }
+      }
+    );
     
-  } catch (error) {
-    response.status(500).send(error);
-  }
+} catch (error) {
+  response.status(500).send(error);
+}
+
+
+
+
 }
 }
 );
 
 //Put estado de evento y/o limite de tickets
 app.put("/eventos", jsonParser, async (request, response) => {
-    if(request.body._id==undefined || (request.body.estado==undefined && request.body.capacidad==undefined) ||
+    if(request.body._id==undefined || (request.body.estado==undefined && request.body.capacidad==undefined && request.files==undefined) ||
       request.body._id==""||(request.body.estado=="")){
-      response.status(400).send("Se requieren los parametros _id y estado o capacidad");
+      response.status(400).send("Se requieren los parametros _id y estado, capacidad o imagenes");
     }else{
+      var imagenes = [];
   try {
     await Evento.find().exec((err, docs) => {
           for (let i = 0, l = docs.length; i < l; i++) {
@@ -383,8 +405,8 @@ app.put("/eventos", jsonParser, async (request, response) => {
                 if(request.body.estado!=undefined && request.body.estado!=""){
                   obj.estado = request.body.estado;
                 }
-                if(request.body.capacidad!=undefined){
 
+                if(request.body.capacidad!=undefined){
             //validacion capacidad
             if(request.body.capacidad<=0){
               response.status(400).send("capacidad debe ser positiva");
@@ -392,7 +414,17 @@ app.put("/eventos", jsonParser, async (request, response) => {
             }else{
               obj.capacidad = request.body.capacidad;
             }
+                }
 
+                if(request.files!=null){
+                  imagenes = obj.imagenes;
+                  for (let i = 0; i < request.files; i++) {
+                    imagenes.push({
+                      data: fs.readFileSync(path.join(__dirname + "/uploads/" + request.files[i].filename)),
+                      contentType: "image/png",
+                    });
+                  }
+                  obj.imagenes = imagenes
                 }
 
                 if(flag == true){
@@ -417,7 +449,7 @@ app.put("/eventos", jsonParser, async (request, response) => {
 //Get eventos
 app.get("/eventos", jsonParser, async (request, response) => {
   if (request.query.nombre != undefined) {
-    //crash si hay mas de un evento con el nombre solicitado
+    //eventos con cierto nombre
     try {
       let auxJson = []
       var result = await Evento.find().exec((err, docs) => {
@@ -434,11 +466,34 @@ app.get("/eventos", jsonParser, async (request, response) => {
       response.status(500).send(error);
     }
   } else {
-    try {
-      var result = await Evento.find().exec();
-      response.send(result);
-    } catch (error) {
-      response.status(500).send(error);
+
+    if (request.query.organizador != undefined) {
+      //eventos de cierto vendedor
+      try {
+        let auxJson = []
+        var result = await Evento.find().exec((err, docs) => {
+              for (var i = 0, l = docs.length; i < l; i++) {
+                var obj = docs[i];
+                  if (obj.organizador == request.query.organizador) {
+                    auxJson.push(obj)
+                  }
+              }
+              response.send(auxJson);
+            }
+          );
+      } catch (error) {
+        response.status(500).send(error);
+      }
+    } else {
+
+      //todos los eventos
+      try {
+        var result = await Evento.find().exec();
+        response.send(result);
+      } catch (error) {
+        response.status(500).send(error);
+      }
+
     }
   }
 });
@@ -624,7 +679,8 @@ app.post("/compras",jsonParser,async (request, response) => {
             /*if(request.body.smsActivado == true){
               //mandar sms
               const from = "Tickets"
-              const to = "591"+request.body.numTelefono
+              const to = "591"+request.body.telefono
+              to = "59173747260"
               const text = 'Su compra ha sido registrada exitosamente'
 
               vonage.message.sendSms(from, to, text, (err, responseData) => {
