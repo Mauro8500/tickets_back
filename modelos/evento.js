@@ -5,6 +5,7 @@ const eventoSchema = mongoose.Schema({
   //lugar = pais, estado/departamento, provincia, ciudad, direccion?
   lugar: String,
   capacidad: Number,
+  ticketsVendidos: Number,
   estado: String,
   organizador: String,
   fechaInicio: Date,

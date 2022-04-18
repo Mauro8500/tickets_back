@@ -93,11 +93,11 @@ app.listen(port, () => {
 //Post evento
 app.post("/eventos", upload.array("images", 12), jsonParser, async (request, response) => {
     if(request.body.nombre==undefined || request.body.lugar==undefined ||
-      request.body.capacidad==undefined || request.body.estado==undefined ||
+      request.body.capacidad==undefined ||
       request.body.organizador==undefined || request.body.fechaInicio==undefined ||
        request.body.fechaFin==undefined || request.body.precio==undefined ||
       request.body.nombre==""||request.body.lugar==""||
-      request.body.estado==""||request.body.organizador==""||
+      request.body.organizador==""||
       request.body.fechaInicio==""||request.body.fechaFin==""){
       response.status(400).send("Se requieren los parametros nombre, lugar, capacidad, organizador, fechaInicio, fechaFin y precio");
     }else{
@@ -113,7 +113,7 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
     //}
 
       //validacion fechas
-      if(request.body.fechaInicio>request.body.fechaFin){
+      if(request.body.fechaInicio.getTime()>request.body.fechaFin.getTime()){
         response.status(400).send("fechaInicio debe ser menor o igual a fechaFin");
       }else{
         let aux = new Date()
@@ -121,7 +121,7 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
         let aux2 = new Date(request.body.fechaInicio)
         aux2.setHours(0, 0, 0, 0);
         aux2.setDate(aux2.getDate()+1)
-        if(aux2<aux){
+        if(aux2.getTime()<aux.getTime()){
           response.status(400).send("fechaInicio no puede ser menor a actual");
         }else{
         //validacion precio
@@ -136,6 +136,7 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
                 nombre: request.body.nombre,
                 lugar: request.body.lugar,
                 capacidad: request.body.capacidad,
+                ticketsVendidos: 0,
                 estado: "pendiente",
                 organizador: request.body.organizador,
                 fechaInicio: request.body.fechaInicio,
@@ -179,7 +180,7 @@ app.post("/clientes",jsonParser,async (request, response) => {
       let aux2 = new Date(request.body.fechaNacimiento)
       aux2.setHours(0, 0, 0, 0);
       aux2.setDate(aux2.getDate()+1)
-      if(aux2>=aux){
+      if(aux2.getTime()>=aux.getTime()){
         response.status(400).send("fechaNacimiento debe ser menor a actual");
       }else{
         //validacion password y su repeticion
@@ -292,7 +293,7 @@ try {
             let aux2 = new Date(request.body.fechaNacimiento)
             aux2.setHours(0, 0, 0, 0);
             aux2.setDate(aux2.getDate()+1)
-            if(aux2>=aux){
+            if(aux2.getTime()>=aux.getTime()){
               response.status(400).send("fechaNacimiento debe ser menor a actual");
             }else{
               //validacion password y su repeticion
@@ -412,7 +413,13 @@ app.put("/eventos", jsonParser, async (request, response) => {
               response.status(400).send("capacidad debe ser positiva");
               flag = false
             }else{
-              obj.capacidad = request.body.capacidad;
+              if(obj.ticketsVendidos>request.body.capacidad){
+                response.status(400).send("se vendieron mas tickets que los que desea configurar");
+                flag=false
+              }else{
+                obj.capacidad = request.body.capacidad;
+              }
+              
             }
                 }
 
@@ -861,6 +868,49 @@ try {
 } catch (error) {
   response.status(500).send(error);
 }
+}
+
+});
+
+//Put aumentar tickets vendidos
+app.put("/tickets", jsonParser, async (request, response) => {
+  if(request.body._id==undefined || request.body.tickets==undefined
+  || request.body.estado==""){
+    response.status(400).send("Se requieren los parametros _id y tickets");
+  }else{
+    if(request.body.tickets<1){
+      response.status(400).send("el parametro tickets debe ser mayor a 0");
+    }else{
+      try {
+        await Evento.find().exec((err, docs) => {
+              for (let i = 0, l = docs.length; i < l; i++) {
+                let flag = false
+                var obj = docs[i];
+                var aux = JSON.stringify(obj._id);
+                  if (aux == JSON.stringify(request.body._id)) {
+                    if(request.body.tickets+obj.ticketsVendidos<=obj.capacidad){
+                      obj.ticketsVendidos+=request.body.tickets
+                      flag=true
+                    }else{
+                      response.status(400).send("No alcanzan los tickets");
+                    }
+                    if(flag == true){
+                    //devuelve vacio cuando es exitoso?
+                    let result = obj.save();
+                    response.send(result);
+                    }else{
+                      //NO HACE NADA
+                    }
+      
+                  }
+              }
+            }
+          );
+      } catch (error) {
+        response.status(500).send(error);
+      }
+    }
+
 }
 
 });

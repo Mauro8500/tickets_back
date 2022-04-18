@@ -7,8 +7,8 @@ Content-Type: application/json
     "lugar":"estadio hernando siles",
     "capacidad":1000,
     "organizador":"empresa1",
-    "fechaInicio":"2022-04-15",
-    "fechaFin":"2022-04-15",
+    "fechaInicio":"2022-04-19",
+    "fechaFin":"2022-04-19",
     "precio":0.01
 }
 
@@ -108,10 +108,6 @@ Content-Type: application/json
     "capacidad":200
 }
 
-### Test get eventos
-GET http://localhost:3000/eventos
-Content-Type: application/json
-
 ### Test get eventos de un vendedor
 GET http://localhost:3000/eventos?organizador=empresa1
 Content-Type: application/json
@@ -188,6 +184,29 @@ Content-Type: application/json
 {
     "mail": "illanesm965@gmail.com",
     "password": "0000a"
+}
+
+
+### Test get eventos
+GET http://localhost:3000/eventos
+Content-Type: application/json
+
+### Test put (aumentar tickets vendidos)
+PUT http://localhost:3000/tickets
+Content-Type: application/json
+
+{
+    "_id": "625d670dd33b4e704fd80bd5",
+    "tickets":-1
+}
+
+### Test get (verificar si se puede cambiar capacidad)
+GET http://localhost:3000/verificacioncapacidad
+Content-Type: application/json
+
+{
+    "_id": "625d670dd33b4e704fd80bd5",
+    "capacidad": 1000
 }
 
 //plantillas calls
