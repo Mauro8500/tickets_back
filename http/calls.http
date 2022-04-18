@@ -172,6 +172,24 @@ Content-Type: application/json
     "smsActivado":true
 }
 
+### Test auth de un cliente
+GET http://localhost:3000/authclientes
+Content-Type: application/json
+
+{
+    "mail": "illanesm965@gmail.com",
+    "password": "0000a"
+}
+
+### Test auth de un vendedor
+GET http://localhost:3000/authvendedores
+Content-Type: application/json
+
+{
+    "mail": "illanesm965@gmail.com",
+    "password": "0000a"
+}
+
 //plantillas calls
 
 ### Test Delete

@@ -807,6 +807,64 @@ app.get("/compras", jsonParser, async (request, response) => {
   }
 });
 
+//auth de clientes
+app.get("/authclientes", jsonParser, async (request, response) => {
+  console.log("mail")
+  console.log(request.body.mail)
+  console.log("pas")
+  console.log(request.body.password)
+  if(request.body.mail==undefined || request.body.password==undefined ||
+    request.body.mail=="" || request.body.password==""){
+    response.status(400).send("Se requieren los parametros mail y password");
+  }else{
+try {
+  let result = []
+  await Cliente.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+          var mail = JSON.stringify(obj.mail);
+          var password = JSON.stringify(obj.password);
+            if (mail == JSON.stringify(request.body.mail) && password == JSON.stringify(request.body.password)) {
+                result = obj;
+            }
+        }
+        response.send(result);
+      }
+    );
+} catch (error) {
+  response.status(500).send(error);
+}
+}
+
+});
+
+//auth de vendedores
+app.get("/authvendedores", jsonParser, async (request, response) => {
+  if(request.body.mail==undefined || request.body.password==undefined ||
+    request.body.mail=="" || request.body.password==""){
+    response.status(400).send("Se requieren los parametros mail y password");
+  }else{
+try {
+  let result = []
+  await Vendedor.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+          var mail = JSON.stringify(obj.mail);
+          var password = JSON.stringify(obj.password);
+            if (mail == JSON.stringify(request.body.mail) && password == JSON.stringify(request.body.password)) {
+                result = obj;
+            }
+        }
+        response.send(result);
+      }
+    );
+} catch (error) {
+  response.status(500).send(error);
+}
+}
+
+});
+
 function capitalizarPrimeraLetra(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
