@@ -871,7 +871,7 @@ try {
 //Put aumentar tickets vendidos
 app.put("/tickets", jsonParser, async (request, response) => {
   if(request.body._id==undefined || request.body.tickets==undefined
-  || request.body.estado==""){
+  || request.body._id==""){
     response.status(400).send("Se requieren los parametros _id y tickets");
   }else{
     if(request.body.tickets<1){
