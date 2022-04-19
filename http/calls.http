@@ -7,8 +7,8 @@ Content-Type: application/json
     "lugar":"estadio hernando siles",
     "capacidad":1000,
     "organizador":"empresa1",
-    "fechaInicio":"2022-04-19",
-    "fechaFin":"2022-04-19",
+    "fechaInicio":"2022-05-19",
+    "fechaFin":"2022-05-19",
     "precio":0.01
 }
 
@@ -155,6 +155,14 @@ Content-Type: application/json
   "smsActivado": true
 }
 
+### Test get confirmar correo de un cliente
+GET http://localhost:3000/confirmacionclientes?c=625ee9abb73aa343fa674a07
+Content-Type: application/json
+
+### Test get confirmar correo de un vendedor
+GET http://localhost:3000/confirmacionvendedores?v=625ee9abb73aa343fa674a07
+Content-Type: application/json
+
 ### Test get compras de un cliente
 GET http://localhost:3000/compras?_id=6254efe0e70d04c8bac51cd5
 Content-Type: application/json
@@ -169,23 +177,12 @@ Content-Type: application/json
 }
 
 ### Test auth de un cliente
-GET http://localhost:3000/authclientes
+GET http://localhost:3000/authclientes?mail=illanesm965@gmail.com&password=0000a
 Content-Type: application/json
-
-{
-    "mail": "illanesm965@gmail.com",
-    "password": "0000a"
-}
 
 ### Test auth de un vendedor
-GET http://localhost:3000/authvendedores
+GET http://localhost:3000/authvendedores?mail=illanesm965@gmail.com&password=0000a
 Content-Type: application/json
-
-{
-    "mail": "illanesm965@gmail.com",
-    "password": "0000a"
-}
-
 
 ### Test get eventos
 GET http://localhost:3000/eventos

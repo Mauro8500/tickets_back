@@ -103,17 +103,16 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
     }else{
     try {
       var imagenes = [];
-      //if(request.files != undefined){
+      if(request.files != undefined){
       for (let i = 0; i < request.files; i++) {
         imagenes.push({
           data: fs.readFileSync(path.join(__dirname + "/uploads/" + request.files[i].filename)),
           contentType: "image/png",
         });
       }
-    //}
-
+    }
       //validacion fechas
-      if(request.body.fechaInicio.getTime()>request.body.fechaFin.getTime()){
+      if(request.body.fechaInicio>request.body.fechaFin){
         response.status(400).send("fechaInicio debe ser menor o igual a fechaFin");
       }else{
         let aux = new Date()
@@ -121,7 +120,8 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
         let aux2 = new Date(request.body.fechaInicio)
         aux2.setHours(0, 0, 0, 0);
         aux2.setDate(aux2.getDate()+1)
-        if(aux2.getTime()<aux.getTime()){
+        //llega antes if
+        if(aux2<aux){
           response.status(400).send("fechaInicio no puede ser menor a actual");
         }else{
         //validacion precio
@@ -180,7 +180,7 @@ app.post("/clientes",jsonParser,async (request, response) => {
       let aux2 = new Date(request.body.fechaNacimiento)
       aux2.setHours(0, 0, 0, 0);
       aux2.setDate(aux2.getDate()+1)
-      if(aux2.getTime()>=aux.getTime()){
+      if(aux2>=aux){
         response.status(400).send("fechaNacimiento debe ser menor a actual");
       }else{
         //validacion password y su repeticion
@@ -293,7 +293,7 @@ try {
             let aux2 = new Date(request.body.fechaNacimiento)
             aux2.setHours(0, 0, 0, 0);
             aux2.setDate(aux2.getDate()+1)
-            if(aux2.getTime()>=aux.getTime()){
+            if(aux2>=aux){
               response.status(400).send("fechaNacimiento debe ser menor a actual");
             }else{
               //validacion password y su repeticion
@@ -816,12 +816,8 @@ app.get("/compras", jsonParser, async (request, response) => {
 
 //auth de clientes
 app.get("/authclientes", jsonParser, async (request, response) => {
-  console.log("mail")
-  console.log(request.body.mail)
-  console.log("pas")
-  console.log(request.body.password)
-  if(request.body.mail==undefined || request.body.password==undefined ||
-    request.body.mail=="" || request.body.password==""){
+  if(request.query.mail == undefined || request.query.password == undefined ||
+    request.query.mail == "" || request.query.password == ""){
     response.status(400).send("Se requieren los parametros mail y password");
   }else{
 try {
@@ -831,7 +827,7 @@ try {
           var obj = docs[i];
           var mail = JSON.stringify(obj.mail);
           var password = JSON.stringify(obj.password);
-            if (mail == JSON.stringify(request.body.mail) && password == JSON.stringify(request.body.password)) {
+            if (mail == JSON.stringify(request.query.mail) && password == JSON.stringify(request.query.password)) {
                 result = obj;
             }
         }
@@ -847,8 +843,8 @@ try {
 
 //auth de vendedores
 app.get("/authvendedores", jsonParser, async (request, response) => {
-  if(request.body.mail==undefined || request.body.password==undefined ||
-    request.body.mail=="" || request.body.password==""){
+  if(request.query.mail == undefined || request.query.password == undefined ||
+    request.query.mail == "" || request.query.password == ""){
     response.status(400).send("Se requieren los parametros mail y password");
   }else{
 try {
@@ -858,7 +854,7 @@ try {
           var obj = docs[i];
           var mail = JSON.stringify(obj.mail);
           var password = JSON.stringify(obj.password);
-            if (mail == JSON.stringify(request.body.mail) && password == JSON.stringify(request.body.password)) {
+            if (mail == JSON.stringify(request.query.mail) && password == JSON.stringify(request.query.password)) {
                 result = obj;
             }
         }
