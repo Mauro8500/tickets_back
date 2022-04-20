@@ -3,10 +3,10 @@ POST http://localhost:3000/eventos
 Content-Type: application/json
 
 {
-    "nombre": "eventoac",
+    "nombre": "stripdance",
     "lugar":"estadio hernando siles",
     "capacidad":1000,
-    "organizador":"empresa1",
+    "organizador":"625f33b12232710a2b941908",
     "fechaInicio":"2022-05-19",
     "fechaFin":"2022-05-19",
     "precio":0.01
@@ -104,8 +104,8 @@ PUT http://localhost:3000/eventos
 Content-Type: application/json
 
 {
-    "_id": "6256f1cebfc2711bfd6103cc",
-    "capacidad":200
+    "_id": "625f218fba027d0fe73f05cb",
+    "capacidad":500
 }
 
 ### Test get eventos de un vendedor
@@ -130,6 +130,10 @@ Content-Type: application/json
 
 ### Test get datos de un vendedor
 GET http://localhost:3000/vendedores?_id=624f2c35c9724fd7af080005
+Content-Type: application/json
+
+### Test get datos de un vendedor
+GET http://localhost:3000/vendedores?mail=vilcs99@gmail.com
 Content-Type: application/json
 
 ### Test post compra
@@ -193,8 +197,8 @@ PUT http://localhost:3000/tickets
 Content-Type: application/json
 
 {
-    "_id": "625d670dd33b4e704fd80bd5",
-    "tickets":-1
+    "_id": "625f218fba027d0fe73f05cb",
+    "tickets":500
 }
 
 ### Test get (verificar si se puede cambiar capacidad)
@@ -202,7 +206,7 @@ GET http://localhost:3000/verificacioncapacidad
 Content-Type: application/json
 
 {
-    "_id": "625d670dd33b4e704fd80bd5",
+    "_id": "625f218fba027d0fe73f05cb",
     "capacidad": 1000
 }
 

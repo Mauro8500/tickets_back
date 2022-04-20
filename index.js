@@ -53,7 +53,8 @@ const transporter = nodemailer.createTransport({
 const PDFDocument = require('pdfkit');
 
 //Requerimiento para sms
-const Vonage = require('@vonage/server-sdk')
+const Vonage = require('@vonage/server-sdk');
+const { resolve } = require("path");
 const vonage = new Vonage({
   apiKey: "a78af8e2",
   apiSecret: "rc1nFsSEsCAZ9hI6"
@@ -277,16 +278,6 @@ app.post("/vendedores",jsonParser,async (request, response) => {
     response.status(400).send("Se requieren los parametros nombre1, apellido1, apellido2, fechaNacimiento, ci, mail, password, repassword, departamento, ciudad, banco, cuenta y esEmpresa");
   }else{
 try {
-  let result =  Vendedor.find().exec((err, docs) => {
-        for (let i = 0, l = docs.length; i < l; i++) {
-          let obj = docs[i];
-            if (JSON.stringify(obj.mail) == JSON.stringify(request.body.mail) && existeVendedor==false) {
-              existeVendedor=true
-            }                   
-        }
-        if(existeVendedor==true){
-          response.status(400).send("body.mail ya tiene una cuenta asociada");
-        }else{
             //validacion fecha de nacimiento
             let aux = new Date()
             aux.setHours(0, 0, 0, 0);
@@ -349,8 +340,8 @@ try {
                       vendedor.sitioWebEmpresa=""
                     }
         
-                    var result = vendedor.save();
-        
+        var result = await vendedor.save();
+                    
                     let mailOptions = {
                       from: "carlosmendizabaltickets@gmail.com",
                       to: request.body.mail,
@@ -372,18 +363,10 @@ try {
                 
             }
             
-        
-        }
-        
-      }
-    );
     
 } catch (error) {
   response.status(500).send(error);
 }
-
-
-
 
 }
 }
@@ -567,12 +550,33 @@ app.get("/vendedores", jsonParser, async (request, response) => {
       response.status(500).send(error);
     }
   } else {
+    if (request.query.mail != undefined) {
+      let flag = false
+      try {
+        let result = await Vendedor.find().exec((err, docs) => {
+          for (let i = 0, l = docs.length; i < l; i++) {
+            var obj = docs[i];
+            var aux = JSON.stringify(obj.mail);
+              if (aux == JSON.stringify(request.query.mail)) {
+                flag = true
+              }
+          }
+          response.send(flag)
+        });
+
+      } catch (error) {
+        response.status(500).send(error);
+      }
+    } else {
     try {
       let result = await Vendedor.find().exec();
-      response.send(result);
+            response.send(result);
     } catch (error) {
       response.status(500).send(error);
     }
+
+  }
+
   }
 });
 
