@@ -3,7 +3,7 @@ POST http://localhost:3000/eventos
 Content-Type: application/json
 
 {
-    "nombre": "stripdance",
+    "nombre": "concierto a",
     "lugar":"estadio hernando siles",
     "capacidad":1000,
     "organizador":"625f33b12232710a2b941908",
@@ -17,14 +17,14 @@ POST http://localhost:3000/clientes
 Content-Type: application/json
 
 {
-    "nombre1": "carlos",
-    "nombre2": "diego",
-    "apellido1": "mendizabal",
-    "apellido2": "mostajo",
-    "fechaNacimiento":"2022-03-05",
-    "password":"0000a",
-    "repassword":"0000a",
-    "ci":"6105591",
+    "nombre1": "abc",
+    "nombre2": "def",
+    "apellido1": "gasd",
+    "apellido2": "dsad",
+    "fechaNacimiento":"1980-03-05",
+    "password":"0000",
+    "repassword":"0000",
+    "ci":"613215",
     "mail":"illanesm965@gmail.com",
     "telefono":75822287,
     "departamento":"la paz",
@@ -125,7 +125,7 @@ GET http://localhost:3000/vendedores
 Content-Type: application/json
 
 ### Test get datos de un cliente
-GET http://localhost:3000/clientes?_id=6254efe0e70d04c8bac51cd5
+GET http://localhost:3000/clientes?_id=6260638c4537ab80f2a1955a
 Content-Type: application/json
 
 ### Test get datos de un vendedor
@@ -168,7 +168,7 @@ GET http://localhost:3000/confirmacionvendedores?v=625ee9abb73aa343fa674a07
 Content-Type: application/json
 
 ### Test get compras de un cliente
-GET http://localhost:3000/compras?_id=6254efe0e70d04c8bac51cd5
+GET http://localhost:3000/compras?_id=ynnyrlgh
 Content-Type: application/json
 
 ### Test put smsActivado de cliente

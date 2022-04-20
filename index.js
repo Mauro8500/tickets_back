@@ -687,11 +687,11 @@ app.post("/compras",jsonParser,async (request, response) => {
             var result = await compra.save();
 
             //Comentado para no quedar sin credito
-            /*if(request.body.smsActivado == true){
+            if(request.body.smsActivado == true){
               //mandar sms
               const from = "Tickets"
               const to = "591"+request.body.telefono
-              to = "59173747260"
+              //to = "59173747260"
               const text = 'Su compra ha sido registrada exitosamente'
 
               vonage.message.sendSms(from, to, text, (err, responseData) => {
@@ -705,7 +705,7 @@ app.post("/compras",jsonParser,async (request, response) => {
                     }
                 }
             })
-            }*/
+            }
 
                         //crear pdf de factura
                         let pdf = new PDFDocument;
