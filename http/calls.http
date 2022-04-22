@@ -116,10 +116,6 @@ Content-Type: application/json
 GET http://localhost:3000/eventos?nombre=eventoc
 Content-Type: application/json
 
-### Test get datos de clientes
-GET http://localhost:3000/clientes
-Content-Type: application/json
-
 ### Test get datos de vendedores
 GET http://localhost:3000/vendedores
 Content-Type: application/json
@@ -188,10 +184,6 @@ Content-Type: application/json
 GET http://localhost:3000/authvendedores?mail=illanesm965@gmail.com&password=0000a
 Content-Type: application/json
 
-### Test get eventos
-GET http://localhost:3000/eventos
-Content-Type: application/json
-
 ### Test put (aumentar tickets vendidos)
 PUT http://localhost:3000/tickets
 Content-Type: application/json
@@ -208,6 +200,62 @@ Content-Type: application/json
 {
     "_id": "625f218fba027d0fe73f05cb",
     "capacidad": 1000
+}
+
+### Test get datos de clientes
+GET http://localhost:3000/clientes
+Content-Type: application/json
+
+### Test get eventos
+GET http://localhost:3000/eventos
+Content-Type: application/json
+
+### Test put habilitar tickets antes de cancelar compra
+PUT http://localhost:3000/eventos
+Content-Type: application/json
+
+{
+    "_id": "62604fb9e455ffa44de3b392",
+    "ticketsVendidos": 8
+}
+
+### Test put cancelarCompra
+PUT http://localhost:3000/compras
+Content-Type: application/json
+
+{
+    "_id": "6260589d31c7f5c3eadb7a4e"
+}
+
+### Test put modificar password comprador
+PUT http://localhost:3000/clientes
+Content-Type: application/json
+
+{
+    "_id": "62605222e455ffa44de3b39e",
+    "oldPassword": "0000",
+    "newPassword": "aaaa"
+}
+
+### Test put modificar telefono comprador
+PUT http://localhost:3000/clientes
+Content-Type: application/json
+
+{
+    "_id": "62605222e455ffa44de3b39e",
+    "telefono": 3123123
+}
+
+### Test put modificar password, telefono y smsActivado comprador
+PUT http://localhost:3000/clientes
+Content-Type: application/json
+
+{
+    "_id": "62605222e455ffa44de3b39e",
+    "oldPassword": "aaaa",
+    "newPassword": "bbb",
+    "telefono": 42394933,
+    "smsActivado": false
 }
 
 //plantillas calls

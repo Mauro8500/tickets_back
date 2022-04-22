@@ -372,68 +372,119 @@ try {
 }
 );
 
-//Put estado de evento y/o limite de tickets
+//Put estado de evento y/o limite de tickets. Tambien se puede cancelar compras
 app.put("/eventos", jsonParser, async (request, response) => {
-    if(request.body._id==undefined || (request.body.estado==undefined && request.body.capacidad==undefined && request.files==undefined) ||
+    if(request.body._id==undefined || (request.body.estado==undefined && request.body.capacidad==undefined && request.files==undefined && request.body.ticketsVendidos==undefined) ||
       request.body._id==""||(request.body.estado=="")){
-      response.status(400).send("Se requieren los parametros _id y estado, capacidad o imagenes");
+      response.status(400).send("Se requieren los parametros _id y estado, capacidad o imagenes"); //o tickets vendidos
     }else{
       var imagenes = [];
-  try {
-    await Evento.find().exec((err, docs) => {
-          for (let i = 0, l = docs.length; i < l; i++) {
-            var obj = docs[i];
-            var aux = JSON.stringify(obj._id);
-              if (aux == JSON.stringify(request.body._id)) {
-                let flag = true
-                if(request.body.estado!=undefined && request.body.estado!=""){
-                  obj.estado = request.body.estado;
-                }
+      if(request.body.ticketsVendidos==undefined){
 
-                if(request.body.capacidad!=undefined){
-            //validacion capacidad
-            if(request.body.capacidad<=0){
-              response.status(400).send("capacidad debe ser positiva");
-              flag = false
-            }else{
-              if(obj.ticketsVendidos>request.body.capacidad){
-                response.status(400).send("se vendieron mas tickets que los que desea configurar");
-                flag=false
-              }else{
-                obj.capacidad = request.body.capacidad;
-              }
-              
-            }
-                }
-
-                if(request.files!=null){
-                  imagenes = obj.imagenes;
-                  for (let i = 0; i < request.files; i++) {
-                    imagenes.push({
-                      data: fs.readFileSync(path.join(__dirname + "/uploads/" + request.files[i].filename)),
-                      contentType: "image/png",
-                    });
+        try {
+          await Evento.find().exec((err, docs) => {
+                for (let i = 0, l = docs.length; i < l; i++) {
+                  var obj = docs[i];
+                  var aux = JSON.stringify(obj._id);
+                    if (aux == JSON.stringify(request.body._id)) {
+                      let flag = true
+                      if(request.body.estado!=undefined && request.body.estado!=""){
+                        obj.estado = request.body.estado;
+                      }
+      
+                      if(request.body.capacidad!=undefined){
+                  //validacion capacidad
+                  if(request.body.capacidad<=0){
+                    response.status(400).send("capacidad debe ser positiva");
+                    flag = false
+                  }else{
+                    if(obj.ticketsVendidos>request.body.capacidad){
+                      response.status(400).send("se vendieron mas tickets que los que desea configurar");
+                      flag=false
+                    }else{
+                      obj.capacidad = request.body.capacidad;
+                    }
+                    
                   }
-                  obj.imagenes = imagenes
+                      }
+      
+                      if(request.files!=null){
+                        imagenes = obj.imagenes;
+                        for (let i = 0; i < request.files; i++) {
+                          imagenes.push({
+                            data: fs.readFileSync(path.join(__dirname + "/uploads/" + request.files[i].filename)),
+                            contentType: "image/png",
+                          });
+                        }
+                        obj.imagenes = imagenes
+                      }
+      
+                      if(flag == true){
+                      //devuelve vacio cuando es exitoso?
+                      let result = obj.save();
+                      response.send(result);
+                      }else{
+                        //NO HACE NADA
+                      }
+      
+                    }
                 }
-
-                if(flag == true){
-                //devuelve vacio cuando es exitoso?
-                let result = obj.save();
-                response.send(result);
-                }else{
-                  //NO HACE NADA
-                }
-
               }
-          }
+            );
+        } catch (error) {
+          response.status(500).send(error);
         }
-      );
-  } catch (error) {
-    response.status(500).send(error);
-  }
-}
 
+      }else{
+
+        try {
+          await Evento.find().exec((err, docs) => {
+                for (let i = 0, l = docs.length; i < l; i++) {
+                  var obj = docs[i];
+                  var aux = JSON.stringify(obj._id);
+                    if (aux == JSON.stringify(request.body._id)) {
+                      let flag = true
+      
+                      if(request.body.ticketsVendidos<0){
+                    response.status(400).send("el parametro ticketsVendidos debe ser mayor a 0");
+                    flag = false
+                  }else{
+                    let aux = new Date()
+                    aux.setHours(0, 0, 0, 0);
+                    if(obj.fechaFin<aux){
+                      response.status(400).send("no puede realizar la cancelacion porque el evento ya termino");
+                      flag=false
+                    }else{
+                      obj.ticketsVendidos -= request.body.ticketsVendidos;
+                    }
+                    
+                  }
+                      
+      
+                      if(flag == true){
+                      //devuelve vacio cuando es exitoso?
+                      let result = obj.save();
+                      response.send(result);
+                      }else{
+                        //NO HACE NADA
+                      }
+      
+                    }
+                }
+              }
+            );
+        } catch (error) {
+          response.status(500).send(error);
+        }
+
+
+
+
+
+
+
+}
+}
 });
 
 //Get eventos
@@ -599,25 +650,44 @@ app.get("/clientes", jsonParser, async (request, response) => {
   }
 });
 
-//Put smsActivado para cliente
+//Put smsActivado para cliente o telefono o password o una combinacion
 app.put("/clientes", jsonParser, async (request, response) => {
-  if(request.body._id==undefined || request.body.smsActivado==undefined ||
-    request.body._id==""){
-    response.status(400).send("Se requieren los parametros _id y smsActivado");
+  if(request.body._id==undefined ||
+    (request.body.smsActivado==undefined && request.body.telefono==undefined &&(request.body.oldPassword==undefined || request.body.newPassword==undefined)) ||
+    request.body._id==""  ||
+     (request.body.smsActivado==undefined && request.body.telefono==undefined &&  (request.body.oldPassword=="" || request.body.newPassword==""))
+     ){
+    response.status(400).send("Se requieren los parametros _id y smsActivado"); //o telefono o password
   }else{
 try {
   let flag
   await Cliente.find().exec((err, docs) => {
         for (let i = 0, l = docs.length; i < l; i++) {
+          flag = false
           var obj = docs[i];
           var aux = JSON.stringify(obj._id);
             if (aux == JSON.stringify(request.body._id)) {
               flag = true
 
-              if(flag == true){
+              if(request.body.oldPassword != undefined){
+                if(request.body.oldPassword == obj.password){
+                  obj.password = request.body.newPassword
+                }else{
+                  flag = false
+                  response.status(400).send("Su password actual no coincide");
+                }
+              }
+
+              if(request.body.smsActivado!=undefined){
                 obj.smsActivado = request.body.smsActivado;
+              }
+
+              if(request.body.telefono!=undefined){
+                obj.telefono = request.body.telefono;
+              }
+
+              if(flag == true){
               //devuelve vacio cuando es exitoso?
-              flag=false
               let result = obj.save();
               response.send(result);
               }else{
@@ -910,6 +980,34 @@ app.put("/tickets", jsonParser, async (request, response) => {
         response.status(500).send(error);
       }
     }
+
+}
+
+});
+
+//Put cancelar una compra
+app.put("/compras", jsonParser, async (request, response) => {
+  if(request.body._id==undefined || request.body._id==""){
+    response.status(400).send("Se requiere el parametro _id");
+  }else{
+      try {
+        await Compra.find().exec((err, docs) => {
+              for (let i = 0, l = docs.length; i < l; i++) {
+                var obj = docs[i];
+                var aux = JSON.stringify(obj._id);
+                  if (aux == JSON.stringify(request.body._id)) {
+                    //devuelve vacio cuando es exitoso?
+                    obj.estado = "cancelada"
+                    let result = obj.save();
+                    response.send(result);
+      
+                  }
+              }
+            }
+          );
+      } catch (error) {
+        response.status(500).send(error);
+      }
 
 }
 

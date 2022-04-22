@@ -23,7 +23,7 @@ const compraSchema = mongoose.Schema({
   precioUnitario: Number,
   total: Number,
   
-  estado: String, //puede ser boolean?
+  estado: String,
 
   correoCliente: String,
   numTelefono: Number,
