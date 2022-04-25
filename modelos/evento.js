@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const eventoSchema = mongoose.Schema({
   nombre: String,
-  //lugar = pais, estado/departamento, provincia, ciudad, direccion?
+  //lugar = pais, estado/departamento, provincia, ciudad, direccion? e
   lugar: String,
   capacidad: Number,
   ticketsVendidos: Number,
