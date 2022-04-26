@@ -137,7 +137,7 @@ POST http://localhost:3000/compras
 Content-Type: application/json
 
 {
-  "idEvento": "a",
+  "idEvento": "c",
   "nombreEvento": "conciertf",
   "direccionEvento": "centro prado calle 233",
   "fechaInicio": "2022-06-06",
@@ -154,6 +154,18 @@ Content-Type: application/json
   "telefono": 73747260,
   "smsActivado": true
 }
+
+### Test cancelar compras desde vendedor
+PUT http://localhost:3000/cancelacionvendedor
+Content-Type: application/json
+
+{
+    "idEvento": "kkfeosy"
+}
+
+### Test get compras
+GET http://localhost:3000/compras
+Content-Type: application/json
 
 ### Test get confirmar correo de un cliente
 GET http://localhost:3000/confirmacionclientes?c=625ee9abb73aa343fa674a07
@@ -257,6 +269,8 @@ Content-Type: application/json
     "telefono": 42394933,
     "smsActivado": false
 }
+
+
 
 //plantillas calls
 

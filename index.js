@@ -372,7 +372,7 @@ try {
 }
 );
 
-//Put estado de evento y/o limite de tickets. Tambien se puede cancelar compras
+//Put estado de evento y/o limite de tickets. Tambien se puede cancelar eventos
 app.put("/eventos", jsonParser, async (request, response) => {
     if(request.body._id==undefined || (request.body.estado==undefined && request.body.capacidad==undefined && request.files==undefined && request.body.ticketsVendidos==undefined) ||
       request.body._id==""||(request.body.estado=="")){
@@ -390,6 +390,9 @@ app.put("/eventos", jsonParser, async (request, response) => {
                       let flag = true
                       if(request.body.estado!=undefined && request.body.estado!=""){
                         obj.estado = request.body.estado;
+                        if(obj.estado == "cancelado"){
+                          obj.ticketsVendidos = 0
+                        }
                       }
       
                       if(request.body.capacidad!=undefined){
@@ -757,7 +760,7 @@ app.post("/compras",jsonParser,async (request, response) => {
             var result = await compra.save();
 
             //Comentado para no quedar sin credito
-            if(request.body.smsActivado == true){
+            /*if(request.body.smsActivado == true){
               //mandar sms
               const from = "Tickets"
               const to = "591"+request.body.telefono
@@ -775,7 +778,7 @@ app.post("/compras",jsonParser,async (request, response) => {
                     }
                 }
             })
-            }
+            }*/
 
                         //crear pdf de factura
                         let pdf = new PDFDocument;
@@ -864,7 +867,13 @@ app.post("/compras",jsonParser,async (request, response) => {
 //Get compras
 app.get("/compras", jsonParser, async (request, response) => {
   if (request.query._id ==undefined || request.query._id == "") {
-    response.status(400).send("Se requiere el parametro _id")
+    //response.status(400).send("Se requiere el parametro _id")
+    try {
+      let result = await Compra.find().exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }
   } else {
     try {
 
@@ -1009,6 +1018,30 @@ app.put("/compras", jsonParser, async (request, response) => {
         response.status(500).send(error);
       }
 
+}
+
+});
+
+//Put cancelar compras de un evento luego de que un vendedor cancela ese evento
+app.put("/cancelacionvendedor", jsonParser, async (request, response) => {
+  if(request.body.idEvento==undefined || request.body.idEvento==""){
+    response.status(400).send("falta parametro");
+  }else{
+try {
+await Compra.updateMany({idEvento: request.body.idEvento},
+  {estado: "cancelada"},
+  {upsert: false}).exec((err, docs) => {
+    if(err){
+      response.status(400).send(err)
+    }else{
+      response.send(docs);
+    }
+}
+);
+
+} catch (error) {
+  response.status(500).send(error);
+}
 }
 
 });
