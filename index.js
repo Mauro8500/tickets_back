@@ -9,6 +9,8 @@ const Evento = require("./modelos/evento");
 const Vendedor = require("./modelos/vendedor");
 const Cliente = require("./modelos/cliente");
 const Compra = require("./modelos/compra");
+const Calificacion = require("./modelos/calificacion");
+const Comentario = require("./modelos/comentario");
 
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
@@ -1044,6 +1046,122 @@ await Compra.updateMany({idEvento: request.body.idEvento},
 }
 }
 
+});
+
+//Post comentario
+app.post("/comentarios",jsonParser,async (request, response) => {
+  if(request.body.idEvento==undefined || request.body.idCliente==undefined ||
+     request.body.comentario==undefined ||
+    request.body.idEvento==""||request.body.idCliente==""||
+    request.body.comentario==""){
+    response.status(400).send("faltan parametros");
+  }else{
+try {
+            let aux = new Date()
+            aux.setHours(0, 0, 0, 0);
+                    var comentario = new Comentario({
+                      idEvento: request.body.idEvento,
+                      idCliente: request.body.idCliente,
+                      comentario: request.body.comentario,
+                      fecha: aux
+                    });
+        
+        var result = await comentario.save();
+                    response.send(result);
+} catch (error) {
+  response.status(500).send(error);
+}
+
+}
+});
+
+//Post calificacion
+app.post("/calificaciones",jsonParser,async (request, response) => {
+  if(request.body.idEvento==undefined || request.body.idCliente==undefined ||
+     request.body.calificacion==undefined ||
+    request.body.idEvento==""||request.body.idCliente==""){
+    response.status(400).send("faltan parametros");
+  }else{
+try {
+            let aux = new Date()
+            aux.setHours(0, 0, 0, 0);
+                    var calificacion = new Calificacion({
+                      idEvento: request.body.idEvento,
+                      idCliente: request.body.idCliente,
+                      calificacion: request.body.calificacion,
+                      fecha: aux
+                    });
+        
+        var result = await calificacion.save();
+                    response.send(result);
+} catch (error) {
+  response.status(500).send(error);
+}
+
+}
+});
+
+//Get calificaciones
+app.get("/calificaciones", jsonParser, async (request, response) => {
+  if (request.query.idEvento ==undefined || request.query.idEvento == "") {
+    response.status(400).send("falta el parametro")
+    /*try {
+      let result = await Compra.find().exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }*/
+  } else {
+    try {
+      let suma = 0
+      let calificaciones = 0
+      let result = await Calificacion.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+            if (obj.idEvento == request.query.idEvento) {
+              suma+=obj.calificacion
+              calificaciones++
+            }
+        }
+        let vectorRes = [calificaciones,(suma/calificaciones).toFixed(2)]
+        response.send(vectorRes);
+      })
+
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+});
+
+//Get comentarios
+app.get("/comentarios", jsonParser, async (request, response) => {
+  if (request.query.idEvento ==undefined || request.query.idEvento == "") {
+    response.status(400).send("falta el parametro")
+    /*try {
+      let result = await Compra.find().exec();
+      response.send(result);
+    } catch (error) {
+      response.status(500).send(error);
+    }*/
+  } else {
+    try {
+
+
+      let vectorComentarios = []
+      let result = await Comentario.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+            if (obj.idEvento == request.query.idEvento) {
+              vectorComentarios.push(obj)
+            }
+        }
+        response.send(vectorComentarios);
+      })
+
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
 });
 
 function capitalizarPrimeraLetra(string) {

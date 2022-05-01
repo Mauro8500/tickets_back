@@ -270,6 +270,34 @@ Content-Type: application/json
     "smsActivado": false
 }
 
+### Test post comentario
+POST http://localhost:3000/comentarios
+Content-Type: application/json
+
+{
+    "idEvento": "626051c38c5a9aabc598b772",
+    "idCliente":"624c85c2c029328daeaa69a7",
+    "comentario":"evento divertido"
+}
+
+### Test post calificacion
+POST http://localhost:3000/calificaciones
+Content-Type: application/json
+
+{
+    "idEvento": "626051c38c5a9aabc598b772",
+    "idCliente":"624c85c2c029328daeaa69a7",
+    "calificacion":0
+}
+
+### Test get cantidad y promedio de calificaciones de evento
+GET http://localhost:3000/calificaciones?idEvento=626051c38c5a9aabc598b772
+Content-Type: application/json
+
+
+### Test get comentarios de evento
+GET http://localhost:3000/comentarios?idEvento=626051c38c5a9aabc598b772
+Content-Type: application/json
 
 
 //plantillas calls
