@@ -123,7 +123,6 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
         let aux2 = new Date(request.body.fechaInicio)
         aux2.setHours(0, 0, 0, 0);
         aux2.setDate(aux2.getDate()+1)
-        //llega antes if
         if(aux2<aux){
           response.status(400).send("fechaInicio no puede ser menor a actual");
         }else{
@@ -425,7 +424,6 @@ app.put("/eventos", jsonParser, async (request, response) => {
                       }
       
                       if(flag == true){
-                      //devuelve vacio cuando es exitoso?
                       let result = obj.save();
                       response.send(result);
                       }else{
@@ -467,7 +465,6 @@ app.put("/eventos", jsonParser, async (request, response) => {
                       
       
                       if(flag == true){
-                      //devuelve vacio cuando es exitoso?
                       let result = obj.save();
                       response.send(result);
                       }else{
@@ -481,11 +478,6 @@ app.put("/eventos", jsonParser, async (request, response) => {
         } catch (error) {
           response.status(500).send(error);
         }
-
-
-
-
-
 
 
 }
@@ -746,7 +738,6 @@ app.post("/compras",jsonParser,async (request, response) => {
               estado: "completada"
             });
             
-            //TODO stripe, numeroFactura y numeroSFV
             compra.numeroFactura = 13
             compra.numeroSFV = 14
 
@@ -976,7 +967,6 @@ app.put("/tickets", jsonParser, async (request, response) => {
                       response.status(400).send("No alcanzan los tickets");
                     }
                     if(flag == true){
-                    //devuelve vacio cuando es exitoso?
                     let result = obj.save();
                     response.send(result);
                     }else{
@@ -1007,7 +997,6 @@ app.put("/compras", jsonParser, async (request, response) => {
                 var obj = docs[i];
                 var aux = JSON.stringify(obj._id);
                   if (aux == JSON.stringify(request.body._id)) {
-                    //devuelve vacio cuando es exitoso?
                     obj.estado = "cancelada"
                     let result = obj.save();
                     response.send(result);
@@ -1171,8 +1160,3 @@ function capitalizarPrimeraLetra(string) {
 function formatearFecha(dateObj){
   return dateObj.getUTCDate()+ "/" + (dateObj.getUTCMonth() + 1) + "/"+dateObj.getUTCFullYear() ;
 }
-
-//plantillas rest
-app.delete("/user", (req, res) => {
-  res.send("Got a DELETE request at /user");
-});

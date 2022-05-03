@@ -299,13 +299,10 @@ Content-Type: application/json
 GET http://localhost:3000/comentarios?idEvento=626051c38c5a9aabc598b772
 Content-Type: application/json
 
-
-//plantillas calls
-
-### Test Delete
-DELETE  http://localhost:3000/user
+### Test borrar cliente
+GET http://localhost:3000/elimclientes?mail=illanesm965@gmail.com
 Content-Type: application/json
 
-{
-    "id": "user"
-}
+### Test borrar vendedor
+GET http://localhost:3000/elimvendedores?mail=illanesm965@gmail.com
+Content-Type: application/json
