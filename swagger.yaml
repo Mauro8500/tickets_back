@@ -1,0 +1,592 @@
+swagger: "2.0"
+info:
+  description: "Esta documentación se refiere a un sistema de venta de tickets"
+  version: "1.0.0"
+  title: "Sistema de venta de tickets"
+host: "tickets.swagger.io"
+basePath: "/v1"
+tags:
+- name: "vendedores"
+  description: "Operaciones de vendedores"
+- name: "clientes"
+  description: "Operaciones de clientes"
+- name: "eventos"
+  description: "Operaciones de eventos"
+- name: "compras"
+  description: "Operaciones de compras"
+schemes:
+- "http"
+paths:
+  /tickets:
+    put:
+      tags:
+      - "compras"
+      summary: "Incrementa el valor de tickets vendidos de un evento"
+      description: "Este endpoint permite incrementar la cantidad de tickets vendidos de un evento. Para esto se debe enviar un body con el id del evento y la cantidad de tickets solicitados por la transacción"
+      operationId: "putTickets"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "objeto putTicket"
+        required: true
+        schema:
+          $ref: "#/definitions/putTicket"
+      responses:
+        "200":
+          description: "put exitoso"
+        "400":
+          description: "solicitud invalida"
+  /compras:
+    post:
+      tags:
+      - "compras"
+      summary: "Agrega un registro de compra"
+      description: ""
+      operationId: "postCompra"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "objeto Compra"
+        required: true
+        schema:
+          $ref: "#/definitions/Compra"
+      responses:
+        "200":
+          description: "post exitoso"
+        "400":
+          description: "solicitud invalida"
+    get:
+      tags:
+      - "compras"
+      summary: "Recupera los registros de compra de un cliente"
+      description: "El endpoint recupera los registros de compra de un cliente en base a su id que debe ser enviado como parametro de query"
+      operationId: "getCompras"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "_id"
+        in: "query"
+        description: "id de cliente"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Compra"
+        "400":
+          description: "solicitud invalida"
+  /vendedores:
+    post:
+      tags:
+      - "vendedores"
+      summary: "Agrega un vendedor"
+      description: ""
+      operationId: "postVendedor"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "objeto Vendedor"
+        required: true
+        schema:
+          $ref: "#/definitions/Vendedor"
+      responses:
+        "200":
+          description: "post exitoso"
+        "400":
+          description: "solicitud invalida"
+    get:
+      tags:
+      - "vendedores"
+      summary: "Recupera vendedores"
+      description: "El endpoint busca todos los vendedores. Tambien puede buscar a un vendedor con su id o con su mail. Para esto se debe mandar el id o el mail del vendedor deseado como parametro de query"
+      operationId: "getVendedores"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "_id"
+        in: "query"
+        description: "id de vendedor"
+        required: false
+        type: "string"
+      - name: "mail"
+        in: "query"
+        description: "mail de vendedor"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Vendedor"
+        "400":
+          description: "solicitud invalida"
+  /clientes:
+    post:
+      tags:
+      - "clientes"
+      summary: "Agrega un cliente"
+      description: ""
+      operationId: "postCliente"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "objeto Cliente"
+        required: true
+        schema:
+          $ref: "#/definitions/Cliente"
+      responses:
+        "200":
+          description: "post exitoso"
+        "400":
+          description: "solicitud invalida"
+    get:
+      tags:
+      - "clientes"
+      summary: "Recupera clientes"
+      description: "El endpoint busca todos los clientes. Tambien puede buscar a un cliente con su id. Para esto se debe mandar el id del cliente deseado como parametro de query"
+      operationId: "getClientes"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "_id"
+        in: "query"
+        description: "id de cliente"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Cliente"
+        "400":
+          description: "solicitud invalida"
+    put:
+      tags:
+      - "clientes"
+      summary: "Actualiza la configuracion SMS de un cliente"
+      description: "Los clientes pueden recibir notificaciones SMS luego de realizar una compra de tickets. Para modificar esta configuracion se debe mandar un body al endpoint con el id del cliente y un boolean igual a true para activar las notificaciones o false para desactivarlas"
+      operationId: "putClientes"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Objeto que incluye el id de un cliente y un boolean llamado smsActivado"
+        required: true
+        schema:
+          $ref: "#/definitions/putCliente"
+      responses:
+        "200":
+          description: "put exitoso"
+        "400":
+          description: "solicitud invalida"
+  /eventos:
+    post:
+      tags:
+      - "eventos"
+      summary: "Agrega un evento"
+      description: ""
+      operationId: "postEvento"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "objeto Evento"
+        required: true
+        schema:
+          $ref: "#/definitions/Evento"
+      responses:
+        "200":
+          description: "post exitoso"
+        "400":
+          description: "solicitud invalida"
+    put:
+      tags:
+      - "eventos"
+      summary: "Actualizar estado y/o capacidad de un evento"
+      description: ""
+      operationId: "putEvento"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Objeto que incluye el id de un evento y al menos uno de los parametros estado o capacidad"
+        required: true
+        schema:
+          $ref: "#/definitions/putEvento"
+      responses:
+        "200":
+          description: "put exitoso"
+        "400":
+          description: "solicitud invalida"
+    get:
+      tags:
+      - "eventos"
+      summary: "Recupera eventos"
+      description: "El endpoint recupera todos los eventos. También puede buscar eventos con cierto nombre. Para esto se debe mandar el nombre del evento deseado como parametro de query. Finalmente, se pueden buscan los eventos de un vendedor. Para esto se debe pasar el id del organizador como parametro de query"
+      operationId: "getEventos"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "nombre"
+        in: "query"
+        description: "nombre de evento"
+        required: false
+        type: "string"
+      - name: "organizador"
+        in: "query"
+        description: "id del vendedor"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Evento"
+        "400":
+          description: "solicitud invalida"
+  /confirmacionclientes:
+    get:
+      tags:
+      - "clientes"
+      summary: "Verifica un cliente"
+      description: "Este endpoint abilita a un cliente para realizar transacciones. Se ejecuta cuando un cliente confirma su correo electronico"
+      operationId: "getConfirmacionClientes"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "c"
+        in: "query"
+        description: "id de cliente"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+        "400":
+          description: "solicitud invalida"
+  /confirmacionvendedores:
+    get:
+      tags:
+      - "vendedores"
+      summary: "Verifica un vendedor"
+      description: "Este endpoint abilita a un vendedor para realizar transacciones. Se ejecuta cuando un vendedor confirma su correo electronico"
+      operationId: "getConfirmacionVendedores"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "v"
+        in: "query"
+        description: "id de vendedor"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+        "400":
+          description: "solicitud invalida"
+definitions:
+  Cliente:
+    type: "object"
+    required:
+    - "nombre1"
+    - "apellido1"
+    - "apellido2"
+    - "fechaNacimiento"
+    - "ci"
+    - "mail"
+    - "password"
+    - "departamento"
+    - "ciudad"
+    properties:
+      nombre1:
+        type: "string"
+        example: "Carlos"
+      nombre2:
+        type: "string"
+        example: "Diego"
+      apellido1:
+        type: "string"
+        example: "Mendizabal"
+      apellido2:
+        type: "string"
+        example: "Mostajo"
+      fechaNacimiento:
+        type: "string"
+        example: "1999-02-26"
+      password:
+        type: "string"
+      ci:
+        type: "string"
+        example: "6105591"
+      mail:
+        type: "string"
+        example: "carlos.mendizabal@ucb.edu.bo"
+      telefono:
+        type: "number"
+        example: 73747260
+      departamento:
+        type: "string"
+        example: "La Paz"
+      ciudad:
+        type: "string"
+        example: "La Paz"
+      smsActivado:
+        type: "boolean"
+        
+  Compra:
+    type: "object"
+    required:
+    - "idEvento"
+    - "nombreEvento"
+    - "direccionEvento"
+    - "fechaInicio"
+    - "fechaFin"
+    - "idCliente"
+    - "nombre1"
+    - "apellido1"
+    - "apellido2"
+    - "nit"
+    - "cantidadTickets"
+    - "precioUnitario"
+    - "correoCliente"
+    - "smsActivado"
+    properties:
+      idEvento:
+        type: "string"
+        example: "6dsk3kdls4"
+      nombreEvento:
+        type: "string"
+        example: "Concierto de Bad Bunny"
+      direccionEvento:
+        type: "string"
+        example: "Avenida Arce Calle 4 Número 340"
+      fechaInicio:
+        type: "string"
+        example: "2022-04-30"
+      fechaFin:
+        type: "string"
+        example: "2022-04-30"
+      idCliente:
+        type: "string"
+        example: "ad9093asld"
+      nombre1:
+        type: "string"
+        example: "Carlos"
+      nombre2:
+        type: "string"
+        example: "Diego"
+      apellido1:
+        type: "string"
+        example: "Mendizabal"
+      apellido2:
+        type: "string"
+        example: "Mostajo"
+      nit:
+        type: "number"
+        example: 6105591293
+      cantidadTickets:
+        type: "number"
+        example: 3
+      precioUnitario:
+        type: "number"
+        example: 350
+      correoCliente:
+        type: "string"
+        example: "carlos.mendizabal@ucb.edu.bo"
+      numTelefono:
+        type: "number"
+        example: 73747260
+      smsActivado:
+        type: "boolean"
+        
+  Evento:
+    type: "object"
+    required:
+    - "nombre"
+    - "lugar"
+    - "capacidad"
+    - "organizador"
+    - "fechaInicio"
+    - "fechaFin"
+    - "precio"
+    properties:
+      nombre:
+        type: "string"
+        example: "Concierto de Bad Bunny"
+      lugar:
+        type: "string"
+        example: "Avenida Arce Calle 4 Número 340"
+      capacidad:
+        type: "number"
+        example: 20134
+      organizador:
+        type: "string"
+        example: "ad9093asld"
+      fechaInicio:
+        type: "string"
+        example: "2022-04-30"
+      fechaFin:
+        type: "string"
+        example: "2022-04-30"
+      precio:
+        type: "number"
+        example: 350
+        
+  putEvento:
+    type: "object"
+    required:
+    - "_id"
+    properties:
+      _id:
+        type: "string"
+        example: "ssdio24eak"
+      capacidad:
+        type: "number"
+        example: 20300
+      estado:
+        type: "string"
+        example: "cancelado"
+
+  putCliente:
+    type: "object"
+    required:
+    - "_id"
+    - "smsActivado"
+    properties:
+      _id:
+        type: "string"
+        example: "ssdio24eak"
+      smsActivado:
+        type: "boolean"
+
+  putTicket:
+    type: "object"
+    required:
+    - "_id"
+    - "tickets"
+    properties:
+      _id:
+        type: "string"
+        example: "ssdio24eak"
+      tickets:
+        type: "number"
+        
+  Vendedor:
+    type: "object"
+    required:
+    - "nombre1"
+    - "apellido1"
+    - "apellido2"
+    - "fechaNacimiento"
+    - "ci"
+    - "mail"
+    - "password"
+    - "departamento"
+    - "ciudad"
+    - "banco"
+    - "cuenta"
+    - "esEmpresa"
+    properties:
+      nombre1:
+        type: "string"
+        example: "Carlos"
+      nombre2:
+        type: "string"
+        example: "Diego"
+      apellido1:
+        type: "string"
+        example: "Mendizabal"
+      apellido2:
+        type: "string"
+        example: "Mostajo"
+      fechaNacimiento:
+        type: "string"
+        example: "1999-02-26"
+      password:
+        type: "string"
+      ci:
+        type: "string"
+        example: "6105591"
+      mail:
+        type: "string"
+        example: "carlos.mendizabal@ucb.edu.bo"
+      telefono:
+        type: "number"
+        example: 73747260
+      departamento:
+        type: "string"
+        example: "La Paz"
+      ciudad:
+        type: "string"
+        example: "La Paz"
+      banco:
+        type: "string"
+        example: "BCP"
+      cuenta:
+        type: "string"
+        example: "492123093120319"
+      esEmpresa:
+        type: "boolean"
+      nombreEmpresa:
+        type: "string"
+        example: "Coca Cola"
+      telefonoEmpresa:
+        type: "number"
+        example: 27973726
+      direccionEmpresa:
+        type: "string"
+        example: "Avenida Arce Calle 4 Número 340"
+      sitioWebEmpresa:
+        type: "string"
+        example: "www.coca-cola.com"
