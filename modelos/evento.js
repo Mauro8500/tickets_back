@@ -14,6 +14,8 @@ const eventoSchema = mongoose.Schema({
   imagenes: [
     {data: Buffer, contentType: String},
   ],
+  cancelable: Boolean,
+  plazo: Number
   //codigo antiguo
  /*imagenes: [
     {

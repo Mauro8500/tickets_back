@@ -27,7 +27,9 @@ const compraSchema = mongoose.Schema({
 
   correoCliente: String,
   numTelefono: Number,
-  smsActivado: Boolean
+  smsActivado: Boolean,
+  cancelable: Boolean,
+  plazo: Number
 });
 
 module.exports = mongoose.model("Compra", compraSchema);

@@ -145,6 +145,8 @@ app.post("/eventos", upload.array("images", 12), jsonParser, async (request, res
                 fechaFin: request.body.fechaFin,
                 precio: request.body.precio,
                 imagenes: imagenes,
+                cancelable: request.body.cancelable,
+                plazo: request.body.plazo,
               });
               var result = await evento.save();
               response.send(result);
@@ -735,7 +737,9 @@ app.post("/compras",jsonParser,async (request, response) => {
               nit: request.body.nit,
               cantidadTickets: request.body.cantidadTickets,
               precioUnitario: request.body.precioUnitario,
-              estado: "completada"
+              estado: "completada",
+              cancelable: request.body.cancelable,
+              plazo: request.body.plazo,
             });
             
             compra.numeroFactura = 13
