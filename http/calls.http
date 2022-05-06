@@ -86,7 +86,8 @@ Content-Type: application/json
 
 {
     "_id": "624c85c2c029328daeaa69a7",
-    "estado":"cancelado"
+    "estado":"cancelado",
+    "mail": "carlosmendizabaltickets@gmail.com"
 }
 
 ### Test put estado y capacidad de evento

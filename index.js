@@ -395,7 +395,25 @@ app.put("/eventos", jsonParser, async (request, response) => {
                         obj.estado = request.body.estado;
                         if(obj.estado == "cancelado"){
                           obj.ticketsVendidos = 0
+                                                  //mandar correo
+                        let mailOptions = {
+                          from: "carlosmendizabaltickets@gmail.com",
+                          to: request.body.mail,
+                          subject: "Evento cancelado",
+                          text: "Usted a cancelado el evento con nombre "+obj.nombre
+                       //   html: '<p>Ingresa a <a href="http://localhost:3000/confirmacionclientes?c=' + result._id + '">este link</a> para confirmar tu dirección de correo electrónico</p>'
+                        };
+          
+                        transporter.sendMail(mailOptions, function(error, info){
+                          if (error) {
+                            console.log(error);
+                          } else {
+                            console.log('Email sent: ' + info.response);
+                          }
+                        });
                         }
+
+
                       }
       
                       if(request.body.capacidad!=undefined){
