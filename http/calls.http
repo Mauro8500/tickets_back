@@ -117,20 +117,8 @@ Content-Type: application/json
 GET http://localhost:3000/eventos?nombre=eventoc
 Content-Type: application/json
 
-### Test get datos de vendedores
-GET http://localhost:3000/vendedores
-Content-Type: application/json
-
 ### Test get datos de un cliente
 GET http://localhost:3000/clientes?_id=6260638c4537ab80f2a1955a
-Content-Type: application/json
-
-### Test get datos de un vendedor
-GET http://localhost:3000/vendedores?_id=624f2c35c9724fd7af080005
-Content-Type: application/json
-
-### Test get datos de un vendedor
-GET http://localhost:3000/vendedores?mail=vilcs99@gmail.com
 Content-Type: application/json
 
 ### Test post compra
@@ -215,14 +203,6 @@ Content-Type: application/json
     "capacidad": 1000
 }
 
-### Test get datos de clientes
-GET http://localhost:3000/clientes
-Content-Type: application/json
-
-### Test get eventos
-GET http://localhost:3000/eventos
-Content-Type: application/json
-
 ### Test put habilitar tickets antes de cancelar compra
 PUT http://localhost:3000/eventos
 Content-Type: application/json
@@ -300,10 +280,93 @@ Content-Type: application/json
 GET http://localhost:3000/comentarios?idEvento=626051c38c5a9aabc598b772
 Content-Type: application/json
 
+
+### Test get datos de un vendedor
+GET http://localhost:3000/vendedores?_id=624f2c35c9724fd7af080005
+Content-Type: application/json
+
+### Test get datos de un vendedor
+GET http://localhost:3000/vendedores?mail=carlosmendizabaltickets@gmail.com
+Content-Type: application/json
+
+### Test get datos de un cliente
+GET http://localhost:3000/clientes?_id=624f2c35c9724fd7af080005
+Content-Type: application/json
+
+### Test get datos de un cliente
+GET http://localhost:3000/clientes?mail=carlosmendizabaltickets@gmail.com
+Content-Type: application/json
+
 ### Test borrar cliente
-GET http://localhost:3000/elimclientes?mail=illanesm965@gmail.com
+GET http://localhost:3000/elimclientes?_id=6260531aa4b2cd116a8f63c9
 Content-Type: application/json
 
 ### Test borrar vendedor
-GET http://localhost:3000/elimvendedores?mail=illanesm965@gmail.com
+GET http://localhost:3000/elimvendedores?_id=62605459711d8843e9ec1d00
+Content-Type: application/json
+
+### Test get datos de clientes
+GET http://localhost:3000/clientes
+Content-Type: application/json
+
+### Test get datos de vendedores
+GET http://localhost:3000/vendedores
+Content-Type: application/json
+
+### Test put modificar password vendedor
+PUT http://localhost:3000/vendedores
+Content-Type: application/json
+
+{
+    "_id": "626065224537ab80f2a19582",
+    "oldPassword": "aaaa",
+    "newPassword": "0000"
+}
+
+### Test put modificar telefono vendedor
+PUT http://localhost:3000/vendedores
+Content-Type: application/json
+
+{
+    "_id": "626065224537ab80f2a19582",
+    "telefono": 3123123
+}
+
+### Test put modificar password y telefono vendedor
+PUT http://localhost:3000/vendedores
+Content-Type: application/json
+
+{
+    "_id": "626065224537ab80f2a19582",
+    "oldPassword": "bbb",
+    "newPassword": "0000",
+    "telefono": 73747260
+}
+
+### Test get eventos con un precio menor o igual al enviado
+GET http://localhost:3000/eventos
+Content-Type: application/json
+
+{
+    "precio": 50
+}
+
+### Test get eventos con una direccion
+GET http://localhost:3000/eventos
+Content-Type: application/json
+
+{
+    "lugar": "17 Gateway Road"
+}
+
+### Test get eventos con una fecha inicial
+GET http://localhost:3000/eventos
+Content-Type: application/json
+
+{
+    "fechaInicio": "2021-09-14T04:00:00.000Z"
+}
+
+### Test get eventos
+GET http://localhost:3000/eventos
 Content-Type: application/json
