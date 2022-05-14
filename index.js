@@ -525,6 +525,69 @@ app.get("/eventos", jsonParser, async (request, response) => {
     }
   } else {
 
+      //  if(){
+
+      //}else{
+
+    if(request.body.precio != undefined){
+//eventos con un precio menor o igual al del precio recibido
+try {
+  let auxJson = []
+  var result = await Evento.find().exec((err, docs) => {
+        for (var i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+            if (obj.precio <= request.body.precio) {
+              auxJson.push(obj)
+            }
+        }
+        response.send(auxJson);
+      }
+    );
+} catch (error) {
+  response.status(500).send(error);
+}
+    }else{
+
+  
+      if(request.body.lugar != undefined){
+        //eventos con cierta direccion
+        try {
+          let auxJson = []
+          var result = await Evento.find().exec((err, docs) => {
+                for (var i = 0, l = docs.length; i < l; i++) {
+                  var obj = docs[i];
+                    if (obj.lugar == request.body.lugar) {
+                      auxJson.push(obj)
+                    }
+                }
+                response.send(auxJson);
+              }
+            );
+        } catch (error) {
+          response.status(500).send(error);
+        }
+            }else{
+
+
+              if(request.body.fechaInicio != undefined){
+                //eventos con una fecha inicial
+                try {
+                  let auxJson = []
+                  var result = await Evento.find().exec((err, docs) => {
+                        for (var i = 0, l = docs.length; i < l; i++) {
+                          var obj = docs[i];
+                            if (compararFechas(obj.fechaInicio,request.body.fechaInicio) == true) {
+                              auxJson.push(obj)
+                            }
+                        }
+                        response.send(auxJson);
+                      }
+                    );
+                } catch (error) {
+                  response.status(500).send(error);
+                }
+                    }else{
+
     if (request.query.organizador != undefined) {
       //eventos de cierto vendedor
       try {
@@ -554,6 +617,10 @@ app.get("/eventos", jsonParser, async (request, response) => {
 
     }
   }
+}
+  }
+}
+  //agregar corchetes aqui
 });
 
 //Get confirmacion clientes
@@ -658,12 +725,32 @@ app.get("/clientes", jsonParser, async (request, response) => {
       response.status(500).send(error);
     }
   } else {
+    if (request.query.mail != undefined) {
+      let flag = false
+      try {
+        let result = await Cliente.find().exec((err, docs) => {
+          for (let i = 0, l = docs.length; i < l; i++) {
+            var obj = docs[i];
+            var aux = JSON.stringify(obj.mail);
+              if (aux == JSON.stringify(request.query.mail)) {
+                flag = true
+              }
+          }
+          response.send(flag)
+        });
+
+      } catch (error) {
+        response.status(500).send(error);
+      }
+    } else {
     try {
       let result = await Cliente.find().exec();
-      response.send(result);
+            response.send(result);
     } catch (error) {
       response.status(500).send(error);
     }
+
+  }
   }
 });
 
@@ -1175,10 +1262,121 @@ app.get("/comentarios", jsonParser, async (request, response) => {
   }
 });
 
+//Put para vendedor el telefono o el password o una combinacion
+app.put("/vendedores", jsonParser, async (request, response) => {
+  if(request.body._id==undefined ||
+    (request.body.telefono==undefined &&(request.body.oldPassword==undefined || request.body.newPassword==undefined)) ||
+    request.body._id==""  ||
+     (request.body.telefono==undefined &&  (request.body.oldPassword=="" || request.body.newPassword==""))
+     ){
+    response.status(400).send("faltan parametros");
+  }else{
+try {
+  let flag
+  await Vendedor.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          flag = false
+          var obj = docs[i];
+          var aux = JSON.stringify(obj._id);
+            if (aux == JSON.stringify(request.body._id)) {
+              flag = true
+
+              if(request.body.oldPassword != undefined){
+                if(request.body.oldPassword == obj.password){
+                  obj.password = request.body.newPassword
+                }else{
+                  flag = false
+                  response.status(400).send("Su password actual no coincide");
+                }
+              }
+
+              if(request.body.telefono!=undefined){
+                obj.telefono = request.body.telefono;
+              }
+
+              if(flag == true){
+              let result = obj.save();
+              response.send(result);
+              }else{
+                //NO HACE NADA
+              }
+
+            }
+        }
+      }
+    );
+} catch (error) {
+  response.status(500).send(error);
+}
+}
+
+});
+
+//Get eliminar cliente
+app.get("/elimclientes", jsonParser, async (request, response) => {
+  if(request.query._id==undefined  || request.query._id==""){
+    response.status(400).send("Se requieren el parametro _id");
+  }else{
+      try {
+        await Cliente.find().exec((err, docs) => {
+              for (let i = 0, l = docs.length; i < l; i++) {
+                var obj = docs[i];
+                var aux = JSON.stringify(obj._id);
+                  if (aux == JSON.stringify(request.query._id)) {
+                    obj.estado = false
+                    let result = obj.save();
+                    response.send(result);
+                  }
+              }
+            }
+          );
+      } catch (error) {
+        response.status(500).send(error);
+      }
+}
+});
+
+//Get eliminar vendedor
+app.get("/elimvendedores", jsonParser, async (request, response) => {
+  if(request.query._id==undefined  || request.query._id==""){
+    response.status(400).send("Se requieren el parametro _id");
+  }else{
+      try {
+        await Vendedor.find().exec((err, docs) => {
+              for (let i = 0, l = docs.length; i < l; i++) {
+                var obj = docs[i];
+                var aux = JSON.stringify(obj._id);
+                  if (aux == JSON.stringify(request.query._id)) {
+                    obj.estado = false
+                    let result = obj.save();
+                    response.send(result);
+                  }
+              }
+            }
+          );
+      } catch (error) {
+        response.status(500).send(error);
+      }
+}
+});
+
 function capitalizarPrimeraLetra(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function formatearFecha(dateObj){
   return dateObj.getUTCDate()+ "/" + (dateObj.getUTCMonth() + 1) + "/"+dateObj.getUTCFullYear() ;
+}
+
+function compararFechas(fecha1, fecha2) {
+  var i = new Date(fecha1.toString());
+  console.log("FECHA 1: "+ i);
+  var j = new Date(fecha2.toString());
+  console.log("FECHA 2: "+j);
+  if (i.getTime() == j.getTime()) {
+    return true;
+  }
+  else {
+    return false;
+  }
 }
