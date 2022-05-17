@@ -370,3 +370,11 @@ Content-Type: application/json
 ### Test get eventos
 GET http://localhost:3000/eventos
 Content-Type: application/json
+
+### Test get vector eventos mes
+GET http://localhost:3000/vectoreventos?opcion=mes
+Content-Type: application/json
+
+### Test get vector eventos global
+GET http://localhost:3000/vectoreventos
+Content-Type: application/json

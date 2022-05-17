@@ -1360,6 +1360,70 @@ app.get("/elimvendedores", jsonParser, async (request, response) => {
 }
 });
 
+//Get vector eventos [finalizados,cancelados,pendientes,en progreso]
+app.get("/vectoreventos", jsonParser, async (request, response) => {
+  if (request.query.opcion == undefined || request.query.opcion == "") {
+    try {
+    let vectorEventos = [0,0,0,0]
+    let fechaActual = new Date();
+    fechaActual.setHours(0, 0, 0, 0);
+    let result = await Evento.find().exec((err, docs) => {
+      for (let i = 0, l = docs.length; i < l; i++) {
+        var obj = docs[i];
+          if (obj.estado=="cancelado") {
+            vectorEventos[1]+=1
+          }else{
+            if (compareDates(fechaActual,obj.fechaFin)==1) {
+              vectorEventos[0]+=1
+            }else{
+              if (compareDates(fechaActual,obj.fechaInicio)==-1) {
+                vectorEventos[2]+=1
+              }else{
+                vectorEventos[3]+=1
+              } 
+            } 
+          }
+      }
+      response.send(vectorEventos);
+    })
+  } catch (error) {
+    response.status(500).send(error);
+  }
+  } else {
+    try {
+
+
+      let vectorEventos = [0,0,0,0]
+      let fechaActual = new Date();
+      fechaActual.setHours(0, 0, 0, 0);
+      let result = await Evento.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+          if(obj.fechaInicio.getMonth() == fechaActual.getMonth()){
+            if (obj.estado=="cancelado") {
+              vectorEventos[1]+=1
+            }else{
+              if (compareDates(fechaActual,obj.fechaFin)==1) {
+                vectorEventos[0]+=1
+              }else{
+                if (compareDates(fechaActual,obj.fechaInicio)==-1) {
+                  vectorEventos[2]+=1
+                }else{
+                  vectorEventos[3]+=1
+                } 
+              } 
+            }
+          }
+        }
+        response.send(vectorEventos);
+      })
+
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+});
+
 function capitalizarPrimeraLetra(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -1378,5 +1442,22 @@ function compararFechas(fecha1, fecha2) {
   }
   else {
     return false;
+  }
+}
+
+function compareDates(fecha1, fecha2) {
+  var i = new Date(fecha1.toString());
+  console.log("FECHA 1: "+ i);
+  var j = new Date(fecha2.toString());
+  console.log("FECHA 2: "+j);
+  if (i.getTime() > j.getTime()) {
+    return 1;
+  }
+  else {
+    if (i.getTime() < j.getTime()) {
+      return -1;
+    }else{
+      return 0;
+    }
   }
 }
