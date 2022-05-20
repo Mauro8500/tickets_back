@@ -1202,13 +1202,12 @@ try {
 //Get calificaciones
 app.get("/calificaciones", jsonParser, async (request, response) => {
   if (request.query.idEvento ==undefined || request.query.idEvento == "") {
-    response.status(400).send("falta el parametro")
-    /*try {
-      let result = await Compra.find().exec();
+    try {
+      let result = await Calificacion.find().exec();
       response.send(result);
     } catch (error) {
       response.status(500).send(error);
-    }*/
+    }
   } else {
     try {
       let suma = 0
@@ -1234,13 +1233,12 @@ app.get("/calificaciones", jsonParser, async (request, response) => {
 //Get comentarios
 app.get("/comentarios", jsonParser, async (request, response) => {
   if (request.query.idEvento ==undefined || request.query.idEvento == "") {
-    response.status(400).send("falta el parametro")
-    /*try {
-      let result = await Compra.find().exec();
+    try {
+      let result = await Comentario.find().exec();
       response.send(result);
     } catch (error) {
       response.status(500).send(error);
-    }*/
+    }
   } else {
     try {
 
@@ -1422,6 +1420,218 @@ app.get("/vectoreventos", jsonParser, async (request, response) => {
       response.status(500).send(error);
     }
   }
+});
+
+//Get vector compras [completadas,canceladas]
+app.get("/vectorcompras", jsonParser, async (request, response) => {
+  if (request.query.opcion == undefined || request.query.opcion == "") {
+    try {
+    let vectorCompras = [0,0]
+    let result = await Compra.find().exec((err, docs) => {
+      for (let i = 0, l = docs.length; i < l; i++) {
+        var obj = docs[i];
+          if (obj.estado=="completada") {
+            vectorCompras[0]+=1
+          }else{
+            vectorCompras[1]+=1
+          }
+      }
+      response.send(vectorCompras);
+    })
+  } catch (error) {
+    response.status(500).send(error);
+  }
+  } else {
+    try {
+
+      let vectorCompras = [0,0]
+      let fechaActual = new Date();
+      fechaActual.setHours(0, 0, 0, 0);
+      let result = await Compra.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+          if(obj.fechaInicio.getMonth() == fechaActual.getMonth()){
+            if (obj.estado=="completada") {
+              vectorCompras[0]+=1
+            }else{
+              vectorCompras[1]+=1
+            }
+          }
+            
+        }
+        response.send(vectorCompras);
+      })
+
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+});
+
+//Get vector tickets [comprados,cancelados]
+app.get("/vectortickets", jsonParser, async (request, response) => {
+  if (request.query.opcion == undefined || request.query.opcion == "") {
+    try {
+    let vectorTickets = [0,0]
+    let result = await Compra.find().exec((err, docs) => {
+      for (let i = 0, l = docs.length; i < l; i++) {
+        var obj = docs[i];
+          if (obj.estado=="completada") {
+            vectorTickets[0]+=obj.cantidadTickets
+          }else{
+            vectorTickets[1]+=obj.cantidadTickets
+          }
+      }
+      response.send(vectorTickets);
+    })
+  } catch (error) {
+    response.status(500).send(error);
+  }
+  } else {
+    try {
+
+      let vectorTickets = [0,0]
+      let fechaActual = new Date();
+      fechaActual.setHours(0, 0, 0, 0);
+      let result = await Compra.find().exec((err, docs) => {
+        for (let i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+          if(obj.fechaInicio.getMonth() == fechaActual.getMonth()){
+            if (obj.estado=="completada") {
+              vectorTickets[0]+=obj.cantidadTickets
+            }else{
+              vectorTickets[1]+=obj.cantidadTickets
+            }
+          }
+            
+        }
+        response.send(vectorTickets);
+      })
+
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+});
+
+//Get vector eventos aniadidos por mes
+app.get("/vectoreventospormes", jsonParser, async (request, response) => {
+    try {
+    let vectorEventos = []
+    let mes = -1
+    let annio = -1
+    let cantidad = 0
+    let result = await Evento.find().sort({ fechaInicio: -1 }).exec((err, docs) => {
+      for (let i = 0, l = docs.length; i < l; i++) {
+        var obj = docs[i];
+        console.log(obj.fechaInicio.getMonth()+ " "+obj.fechaInicio.getUTCFullYear())
+          if (obj.fechaInicio.getMonth()!=mes || obj.fechaInicio.getUTCFullYear()!=annio) {
+            if(annio != -1){
+            vectorEventos.push([cantidad,mes,annio])
+          }
+            cantidad = 1
+            mes = obj.fechaInicio.getMonth()
+            annio = obj.fechaInicio.getUTCFullYear()
+          }else{
+            cantidad++
+          }
+      }
+      let vectorAux = []
+      for (let i = 0, l = vectorEventos.length; i < l; i++) {
+        if(!vectorAux.includes(vectorEventos[i][2])){
+          vectorAux.push(vectorEventos[i][2])
+        }
+      }
+     
+     vectorAux.sort(function(a, b) {
+      return a - b;
+    });
+    //vector aux tiene annios
+    let vectorFinal=[]
+    for (let i = 0, l = vectorAux.length; i < l; i++) {
+      for (let j = 0, k = 11; j < k; j++) {
+        vectorFinal.push([0,j,vectorAux[i]])
+      }
+    }
+      
+    for (let i = 0, l = vectorEventos.length; i < l; i++) {
+      for (let j = 0, k = vectorFinal.length; j < k; j++) {
+        if(vectorEventos[i][1]==vectorFinal[j][1]
+          && vectorEventos[i][2]==vectorFinal[j][2]){
+          vectorFinal[j][0]+=vectorEventos[i][0]
+        }
+      }
+    }
+  
+    for (let i = vectorFinal.length - 1; i >= 0; i--) {
+      if(vectorFinal[i][0]==0){
+        vectorFinal.splice(i,1)
+  }
+}
+    response.send(vectorFinal);
+    
+    })
+  } catch (error) {
+    response.status(500).send(error);
+  }
+});
+
+//Get vector entradas vendidas por mes
+app.get("/vectorentradaspormes", jsonParser, async (request, response) => {
+  try {
+  let vectorEntradas = []
+  let mes = -1
+  let annio = -1
+  let cantidad = 0
+  let result = await Compra.find().sort({ fechaEmision: -1 }).exec((err, docs) => {
+    for (let i = 0, l = docs.length; i < l; i++) {
+      var obj = docs[i];
+      console.log(obj.fechaEmision.getMonth()+ " "+obj.fechaEmision.getUTCFullYear())
+        if (obj.fechaEmision.getMonth()!=mes || obj.fechaEmision.getUTCFullYear()!=annio) {
+          if(annio != -1){
+            vectorEntradas.push([cantidad,mes,annio])
+          }
+          cantidad = obj.cantidadTickets
+          mes = obj.fechaEmision.getMonth()
+          annio = obj.fechaEmision.getUTCFullYear()
+        }else{
+          cantidad+=obj.cantidadTickets
+        }
+    }
+    response.send(vectorEntradas);
+  })
+} catch (error) {
+  response.status(500).send(error);
+}
+});
+
+//Get vector monto en ventas por mes
+app.get("/vectormontopormes", jsonParser, async (request, response) => {
+  try {
+  let vectorEntradas = []
+  let mes = -1
+  let annio = -1
+  let cantidad = 0
+  let result = await Compra.find().sort({ fechaEmision: -1 }).exec((err, docs) => {
+    for (let i = 0, l = docs.length; i < l; i++) {
+      var obj = docs[i];
+      console.log(obj.fechaEmision.getMonth()+ " "+obj.fechaEmision.getUTCFullYear())
+        if (obj.fechaEmision.getMonth()!=mes || obj.fechaEmision.getUTCFullYear()!=annio) {
+          if(annio != -1){
+            vectorEntradas.push([cantidad,mes,annio])
+          }
+          cantidad = obj.total
+          mes = obj.fechaEmision.getMonth()
+          annio = obj.fechaEmision.getUTCFullYear()
+        }else{
+          cantidad+=obj.total
+        }
+    }
+    response.send(vectorEntradas);
+  })
+} catch (error) {
+  response.status(500).send(error);
+}
 });
 
 function capitalizarPrimeraLetra(string) {
