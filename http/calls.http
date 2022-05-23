@@ -152,10 +152,6 @@ Content-Type: application/json
     "idEvento": "kkfeosy"
 }
 
-### Test get compras
-GET http://localhost:3000/compras
-Content-Type: application/json
-
 ### Test get confirmar correo de un cliente
 GET http://localhost:3000/confirmacionclientes?c=625ee9abb73aa343fa674a07
 Content-Type: application/json
@@ -305,14 +301,6 @@ Content-Type: application/json
 GET http://localhost:3000/elimvendedores?_id=62605459711d8843e9ec1d00
 Content-Type: application/json
 
-### Test get datos de clientes
-GET http://localhost:3000/clientes
-Content-Type: application/json
-
-### Test get datos de vendedores
-GET http://localhost:3000/vendedores
-Content-Type: application/json
-
 ### Test put modificar password vendedor
 PUT http://localhost:3000/vendedores
 Content-Type: application/json
@@ -367,6 +355,27 @@ Content-Type: application/json
     "fechaInicio": "2021-09-14T04:00:00.000Z"
 }
 
+
+### Test get comentarios
+GET http://localhost:3000/comentarios
+Content-Type: application/json
+
+### Test get calificaciones
+GET http://localhost:3000/calificaciones
+Content-Type: application/json
+
+### Test get compras
+GET http://localhost:3000/compras
+Content-Type: application/json
+
+### Test get datos de clientes
+GET http://localhost:3000/clientes
+Content-Type: application/json
+
+### Test get datos de vendedores
+GET http://localhost:3000/vendedores
+Content-Type: application/json
+
 ### Test get eventos
 GET http://localhost:3000/eventos
 Content-Type: application/json
@@ -377,4 +386,32 @@ Content-Type: application/json
 
 ### Test get vector eventos global
 GET http://localhost:3000/vectoreventos
+Content-Type: application/json
+
+### Test get vector compras mes
+GET http://localhost:3000/vectorcompras?opcion=mes
+Content-Type: application/json
+
+### Test get vector compras global
+GET http://localhost:3000/vectorcompras
+Content-Type: application/json
+
+### Test get vector tickets mes
+GET http://localhost:3000/vectortickets?opcion=mes
+Content-Type: application/json
+
+### Test get vector tickets global
+GET http://localhost:3000/vectortickets
+Content-Type: application/json
+
+### Test get vector eventos aniadidos por mes
+GET http://localhost:3000/vectoreventospormes
+Content-Type: application/json
+
+### Test get vector entradas vendidas por mes
+GET http://localhost:3000/vectorentradaspormes
+Content-Type: application/json
+
+### Test get vector monto en ventas por mes
+GET http://localhost:3000/vectormontopormes
 Content-Type: application/json
