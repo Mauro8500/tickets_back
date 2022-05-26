@@ -11,6 +11,7 @@ const vendedorSchema = mongoose.Schema({
   mail: String,
   telefono: Number,
   //pais: String,
+//asd
   departamento: String,
   ciudad: String,
   estado: Boolean,
