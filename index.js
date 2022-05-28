@@ -1634,6 +1634,125 @@ app.get("/vectormontopormes", jsonParser, async (request, response) => {
 }
 });
 
+//Get eventos por
+app.put("/eventospor", jsonParser, async (request, response) => {
+  if (request.query.nombre != undefined) {
+    //eventos con cierto nombre
+    try {
+      let auxJson = []
+      var result = await Evento.find().exec((err, docs) => {
+            for (var i = 0, l = docs.length; i < l; i++) {
+              var obj = docs[i];
+                if (obj.nombre == request.query.nombre) {
+                  auxJson.push(obj)
+                }
+            }
+            response.send(auxJson);
+          }
+        );
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  } else {
+
+      //  if(){
+
+      //}else{
+
+    if(request.body.precio != undefined){
+//eventos con un precio menor o igual al del precio recibido
+try {
+  let auxJson = []
+  var result = await Evento.find().exec((err, docs) => {
+        for (var i = 0, l = docs.length; i < l; i++) {
+          var obj = docs[i];
+            if (obj.precio <= request.body.precio) {
+              auxJson.push(obj)
+            }
+        }
+        response.send(auxJson);
+      }
+    );
+} catch (error) {
+  response.status(500).send(error);
+}
+    }else{
+
+  
+      if(request.body.lugar != undefined){
+        //eventos con cierta direccion
+        try {
+          let auxJson = []
+          var result = await Evento.find().exec((err, docs) => {
+                for (var i = 0, l = docs.length; i < l; i++) {
+                  var obj = docs[i];
+                    if (obj.lugar == request.body.lugar) {
+                      auxJson.push(obj)
+                    }
+                }
+                response.send(auxJson);
+              }
+            );
+        } catch (error) {
+          response.status(500).send(error);
+        }
+            }else{
+
+
+              if(request.body.fechaInicio != undefined){
+                //eventos con una fecha inicial
+                try {
+                  let auxJson = []
+                  var result = await Evento.find().exec((err, docs) => {
+                        for (var i = 0, l = docs.length; i < l; i++) {
+                          var obj = docs[i];
+                            if (compararFechas(obj.fechaInicio,request.body.fechaInicio) == true) {
+                              auxJson.push(obj)
+                            }
+                        }
+                        response.send(auxJson);
+                      }
+                    );
+                } catch (error) {
+                  response.status(500).send(error);
+                }
+                    }else{
+
+    if (request.query.organizador != undefined) {
+      //eventos de cierto vendedor
+      try {
+        let auxJson = []
+        var result = await Evento.find().exec((err, docs) => {
+              for (var i = 0, l = docs.length; i < l; i++) {
+                var obj = docs[i];
+                  if (obj.organizador == request.query.organizador) {
+                    auxJson.push(obj)
+                  }
+              }
+              response.send(auxJson);
+            }
+          );
+      } catch (error) {
+        response.status(500).send(error);
+      }
+    } else {
+
+      //todos los eventos
+      try {
+        var result = await Evento.find().exec();
+        response.send(result);
+      } catch (error) {
+        response.status(500).send(error);
+      }
+
+    }
+  }
+}
+  }
+}
+  //agregar corchetes aqui
+});
+
 function capitalizarPrimeraLetra(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -1644,9 +1763,9 @@ function formatearFecha(dateObj){
 
 function compararFechas(fecha1, fecha2) {
   var i = new Date(fecha1.toString());
-  console.log("FECHA 1: "+ i);
+//  console.log("FECHA 1: "+ i);
   var j = new Date(fecha2.toString());
-  console.log("FECHA 2: "+j);
+//  console.log("FECHA 2: "+j);
   if (i.getTime() == j.getTime()) {
     return true;
   }

@@ -332,7 +332,7 @@ Content-Type: application/json
 }
 
 ### Test get eventos con un precio menor o igual al enviado
-GET http://localhost:3000/eventos
+PUT http://localhost:3000/eventospor
 Content-Type: application/json
 
 {
@@ -340,7 +340,7 @@ Content-Type: application/json
 }
 
 ### Test get eventos con una direccion
-GET http://localhost:3000/eventos
+PUT http://localhost:3000/eventospor
 Content-Type: application/json
 
 {
@@ -348,7 +348,7 @@ Content-Type: application/json
 }
 
 ### Test get eventos con una fecha inicial
-GET http://localhost:3000/eventos
+PUT http://localhost:3000/eventospor
 Content-Type: application/json
 
 {
