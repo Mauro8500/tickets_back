@@ -14,9 +14,119 @@ tags:
   description: "Operaciones de eventos"
 - name: "compras"
   description: "Operaciones de compras"
+- name: "dashboard"
+  description: "Operaciones de dashboard"
 schemes:
 - "http"
 paths:
+  /vectormontopormes:
+    get:
+      tags:
+      - "dashboard"
+      summary: "Devuelve un vector con el monto de dinero generado por mes"
+      description: "Este endpoint permite recuperar el monto de dinero generado por la venta de tickets al mes"
+      operationId: "getMontoPorMes"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+        "200":
+          description: "get exitoso"
+        "400":
+          description: "solicitud invalida"
+  /vectorentradaspormes:
+    get:
+      tags:
+      - "dashboard"
+      summary: "Devuelve un vector con la cantidad de tickets vendidos por mes"
+      description: "Este endpoint permite recuperar la cantidad de tickets vendidos por mes"
+      operationId: "getEntradasPorMes"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+        "200":
+          description: "get exitoso"
+        "400":
+          description: "solicitud invalida"
+  /vectoreventospormes:
+    get:
+      tags:
+      - "dashboard"
+      summary: "Devuelve un vector con la cantidad de eventos que comienzan cada mes"
+      description: "Este endpoint permite recuperar la cantidad de eventos que comienzan cada mes"
+      operationId: "getEventosPorMes"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+        "200":
+          description: "get exitoso"
+        "400":
+          description: "solicitud invalida"
+  /vectortickets:
+    get:
+      tags:
+      - "dashboard"
+      summary: "Devuelve un vector con la cantidad de tickets comprados y cancelados en el último mes o de manera global"
+      description: "Este endpoint permite recuperar un vector con dos valores. El primer valor representa el número de tickets comprados y el segundo valor representa el número de tickets cancelados. Si se envia el parámetro opcion=mes en el query los resultados son del último mes. Si no se envia el parámetro los resultados son globales"
+      operationId: "getVectorTickets"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "opcion"
+        in: "query"
+        description: "se debe enviar para que los resultados sean del último mes"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+        "400":
+          description: "solicitud invalida"
+  /vectoreventos:
+    get:
+      tags:
+      - "dashboard"
+      summary: "Devuelve un vector con la cantidad de eventos finalizados, cancelados, pendientes y en progreso para el último mes o de manera global"
+      description: "Este endpoint permite recuperar un vector con cuatro valores. El primer valor representa el número de eventos finalizados. El segundo valor representa el número de eventos cancelados. El tercer valor representa el número de eventos pendientes. El cuarto valor representa el número de eventos en progreso. Si se envia el parámetro opcion=mes en el query los resultados son del último mes. Si no se envia el parámetro los resultados son globales"
+      operationId: "getVectorEventos"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "opcion"
+        in: "query"
+        description: "se debe enviar para que los resultados sean del último mes"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+        "400":
+          description: "solicitud invalida"
+  /vectorcompras:
+    get:
+      tags:
+      - "dashboard"
+      summary: "Devuelve un vector con la cantidad de compras completadas y canceladas en el último mes o de manera global"
+      description: "Este endpoint permite recuperar un vector con dos valores. El primer valor representa el número de compras completadas y el segundo valor representa el número de compras canceladas. Si se envia el parámetro opcion=mes en el query los resultados son del último mes. Si no se envia el parámetro los resultados son globales"
+      operationId: "getVectorCompras"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "opcion"
+        in: "query"
+        description: "se debe enviar para que los resultados sean del último mes"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+        "400":
+          description: "solicitud invalida"
   /tickets:
     put:
       tags:
@@ -64,11 +174,35 @@ paths:
           description: "post exitoso"
         "400":
           description: "solicitud invalida"
+    put:
+      tags:
+      - "compras"
+      summary: "Cancela una compra"
+      description: ""
+      operationId: "putCompra"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "objeto putCompra"
+        required: true
+        schema:
+          $ref: "#/definitions/putCompra"
+      responses:
+        "200":
+          description: "put exitoso"
+        "400":
+          description: "solicitud invalida"
     get:
       tags:
       - "compras"
-      summary: "Recupera los registros de compra de un cliente"
-      description: "El endpoint recupera los registros de compra de un cliente en base a su id que debe ser enviado como parametro de query"
+      summary: "Recupera los registros de compra de un cliente o de todos"
+      description: "El endpoint recupera los registros de compra de un cliente si se envía su id como parametro de query. Si no se envía el id se recuperan los registros de compra de todos los clientes"
       operationId: "getCompras"
       produces:
       - "application/xml"
@@ -77,7 +211,7 @@ paths:
       - name: "_id"
         in: "query"
         description: "id de cliente"
-        required: true
+        required: false
         type: "string"
       responses:
         "200":
@@ -86,6 +220,144 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Compra"
+        "400":
+          description: "solicitud invalida"
+  /authvendedores:     
+    get:
+      tags:
+      - "vendedores"
+      summary: "Autentica un vendedor"
+      description: "Se debe enviar un body con los parámetros mail y password al endpoint. Si la combinación mail y password existe en la base de datos el endpoint devuelve los datos del vendedor. Si no existe se retorna un objeto vacío"
+      operationId: "authVendedores"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "objeto Auth"
+        required: true
+        schema:
+          $ref: "#/definitions/Auth"
+      responses:
+        "200":
+          description: "un objeto con los datos del vendedor o un objeto vacío"
+        "400":
+          description: "solicitud invalida"
+  /authclientes:
+    get:
+      tags:
+      - "clientes"
+      summary: "Autentica un cliente"
+      description: "Se debe enviar un body con los parámetros mail y password al endpoint. Si la combinación mail y password existe en la base de datos el endpoint devuelve los datos del cliente. Si no existe se retorna un objeto vacío"
+      operationId: "authClientes"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "objeto Auth"
+        required: true
+        schema:
+          $ref: "#/definitions/Auth"
+      responses:
+        "200":
+          description: "un objeto con los datos del cliente o un objeto vacío"
+        "400":
+          description: "solicitud invalida"
+  /comentarios:     
+    get:
+      tags:
+      - "eventos"
+      summary: "Recupera los comentarios de uno o todos los eventos"
+      description: "El endpoint recupera los comentarios de u evento si se envia el id del evento como parámetro query o los comentarios de todos los eventos si no se envia este parámetro"
+      operationId: "getComentarios"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idEvento"
+        in: "query"
+        description: "id de evento"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Comentario"
+        "400":
+          description: "solicitud invalida"
+    post:
+      tags:
+      - "eventos"
+      summary: "Agrega un comentario a un evento"
+      description: ""
+      operationId: "postComentario"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "objeto Comentario"
+        required: true
+        schema:
+          $ref: "#/definitions/Comentario"
+      responses:
+        "200":
+          description: "post exitoso"
+        "400":
+          description: "solicitud invalida"
+  /calificaciones:     
+    get:
+      tags:
+      - "eventos"
+      summary: "Recupera el número y promedio de calificaciones de un evento o las calificaciones de todos los eventos"
+      description: "Si se envia el id del evento como parámetro en el query el endpoint recupera un vector con dos valores. El primer valor representa el número de calificaciones de un evento. El segundo valor representa el promedio de estas calificaciones. Si no se envia el parámetro el endpoint devuelve las calificaciones de todos los eventos"
+      operationId: "getCalificaciones"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idEvento"
+        in: "query"
+        description: "id de evento"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "get exitoso"
+        "400":
+          description: "solicitud invalida"
+    post:
+      tags:
+      - "eventos"
+      summary: "Agrega una calificación a un evento"
+      description: ""
+      operationId: "postCalificacion"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "objeto Calificacion"
+        required: true
+        schema:
+          $ref: "#/definitions/Calificacion"
+      responses:
+        "200":
+          description: "post exitoso"
         "400":
           description: "solicitud invalida"
   /vendedores:
@@ -142,6 +414,30 @@ paths:
               $ref: "#/definitions/Vendedor"
         "400":
           description: "solicitud invalida"
+    put:
+      tags:
+      - "vendedores"
+      summary: "Actualiza el teléfono o password del vendedor"
+      description: "Para cambiar el teléfono del vendedor se debe mandar un body al endpoint con el id del vendedor y el telefono. Para cambiar el password del vendedor se debe mandar un body al endpoint con el id, el password actual y el password nuevo del vendedor"
+      operationId: "putVendedores"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Objeto que incluye el parámetro _id y el parámetro telefono o los parametros oldPassword y newPassword"
+        required: true
+        schema:
+          $ref: "#/definitions/putVendedor"
+      responses:
+        "200":
+          description: "put exitoso"
+        "400":
+          description: "solicitud invalida"
   /clientes:
     post:
       tags:
@@ -194,8 +490,8 @@ paths:
     put:
       tags:
       - "clientes"
-      summary: "Actualiza la configuracion SMS de un cliente"
-      description: "Los clientes pueden recibir notificaciones SMS luego de realizar una compra de tickets. Para modificar esta configuracion se debe mandar un body al endpoint con el id del cliente y un boolean igual a true para activar las notificaciones o false para desactivarlas"
+      summary: "Actualiza el teléfono, password o configuración SMS del cliente"
+      description: "Para cambiar el teléfono del cliente se debe mandar un body al endpoint con el id del cliente y el telefono. Para cambiar el password del cliente se debe mandar un body al endpoint con el id, el password actual y el password nuevo del cliente. Para cambiar la configuracion SMS del cliente se debe mandar un body al endpoint con el id la configuracion SMS del cliente"
       operationId: "putClientes"
       consumes:
       - "application/json"
@@ -206,7 +502,7 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Objeto que incluye el id de un cliente y un boolean llamado smsActivado"
+        description: "Objeto que incluye el parámetro _id y el parámetro telefono o el parámetro smsActivado o los parametros oldPassword y newPassword"
         required: true
         schema:
           $ref: "#/definitions/putCliente"
@@ -483,6 +779,60 @@ definitions:
         type: "number"
         example: 350
         
+  Comentario:
+    type: "object"
+    required:
+    - "idEvento"
+    - "idCliente"
+    - "comentario"
+    - "fecha"
+    properties:
+      idEvento:
+        type: "string"
+        example: "ssdio24eak"
+      idCliente:
+        type: "string"
+        example: "agad8sadas2"
+      comentario:
+        type: "string"
+        example: "Este evento fue muy divertido"
+      fecha:
+        type: "string"
+        example: "2022-04-30"
+        
+  Calificacion:
+    type: "object"
+    required:
+    - "idEvento"
+    - "idCliente"
+    - "calificacion"
+    - "fecha"
+    properties:
+      idEvento:
+        type: "string"
+        example: "ssdio24eak"
+      idCliente:
+        type: "string"
+        example: "agad8sadas2"
+      calificacion:
+        type: "number"
+        example: 3
+      fecha:
+        type: "string"
+        example: "2022-04-30"
+
+  Auth:
+    type: "object"
+    required:
+    - "mail"
+    - "password"
+    properties:
+      mail:
+        type: "string"
+        example: "usuario1@gmail.com"
+      password:
+        type: "string"
+        
   putEvento:
     type: "object"
     required:
@@ -503,12 +853,33 @@ definitions:
     required:
     - "_id"
     - "smsActivado"
+    - "oldPassword"
+    - "newPassword"
     properties:
       _id:
         type: "string"
         example: "ssdio24eak"
       smsActivado:
         type: "boolean"
+      oldPassword:
+        type: "string"
+      newPassword:
+        type: "string"
+
+  putVendedor:
+    type: "object"
+    required:
+    - "_id"
+    - "oldPassword"
+    - "newPassword"
+    properties:
+      _id:
+        type: "string"
+        example: "ssdio24eak"
+      oldPassword:
+        type: "string"
+      newPassword:
+        type: "string"
 
   putTicket:
     type: "object"
@@ -521,6 +892,15 @@ definitions:
         example: "ssdio24eak"
       tickets:
         type: "number"
+        
+  putCompra:
+    type: "object"
+    required:
+    - "_id"
+    properties:
+      _id:
+        type: "string"
+        example: "ssdio24eak"
         
   Vendedor:
     type: "object"
