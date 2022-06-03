@@ -861,8 +861,8 @@ app.post("/compras",jsonParser,async (request, response) => {
 
             var result = await compra.save();
 
-            //Comentado para no quedar sin credito
-            /*if(request.body.smsActivado == true){
+            //TODO Comentado para no quedar sin credito
+            if(request.body.smsActivado == true){
               //mandar sms
               const from = "Tickets"
               const to = "591"+request.body.telefono
@@ -880,7 +880,7 @@ app.post("/compras",jsonParser,async (request, response) => {
                     }
                 }
             })
-            }*/
+            }
 
                         //crear pdf de factura
                         let pdf = new PDFDocument;
